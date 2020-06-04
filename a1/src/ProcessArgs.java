@@ -3,19 +3,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/* Parse command line arguments
- * Assume that they always appear as a key:value pair, separated by spaces
- * Store each key:value pair in a HashMap for easy lookup during runtime
- * e.g. CommandLine -v 1 would produce entry {v=1]
- */
-
-
 enum ArgsStatus {
     INVALID,
     VALID,
     HELP,
 }
+
 public class ProcessArgs {
 
     private static Map<String, FindFileArg> FindFileArgs = new HashMap<>() {{

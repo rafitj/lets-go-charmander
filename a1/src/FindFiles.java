@@ -17,13 +17,18 @@ public class FindFiles {
 
             String directory = getDirectory();
             String regex = formRegex();
-            System.out.println(regex);
-            System.out.println("Searching for files in directory: " + directory);
-            File fileHandler = new File(directory);
-            File[] fileList = fileHandler.listFiles();
 
-            matchFiles(fileList, regex);
-            printMatchedFiles();
+            File mainFile = new File(directory);
+            File[] fileList = mainFile.listFiles();
+            if (!mainFile.canRead()){
+                System.out.println("No read access for directory: " + mainFile.getName());
+            }
+            else {
+                System.out.println("Searching for files in directory: " + directory);
+                matchFiles(fileList, regex);
+                printMatchedFiles();
+            }
+
         }
     }
 
@@ -34,7 +39,7 @@ public class FindFiles {
             }
         } else {
             for (File f: fileList) {
-                if (compare(f.getName(),regex)) {
+                if (f.isFile() && compare(f.getName(),regex)) {
                     matchedFilePaths.add(f.getAbsolutePath());
                 }
             }
@@ -42,17 +47,21 @@ public class FindFiles {
     }
 
     private static void recurseMatchFile(File file, String regex) {
-        System.out.println(file.getName());
         if (!file.isDirectory()){
             if (compare(file.getName(),regex)) {
                 matchedFilePaths.add(file.getAbsolutePath());
             }
         } else {
             File fileHandler = new File(file.getAbsolutePath());
-            File[] fileList = fileHandler.listFiles();
-            for (File f: fileList) {
-                recurseMatchFile(f,regex);
+            if (!fileHandler.canRead()){
+                System.out.println("Skipping directory: "+ fileHandler.getName() + " No read access." );
+            } else {
+                File[] fileList = fileHandler.listFiles();
+                for (File f: fileList) {
+                    recurseMatchFile(f,regex);
+                }
             }
+
         }
     }
 
@@ -61,6 +70,7 @@ public class FindFiles {
         for (String filePath: matchedFilePaths) {
             System.out.println(filePath);
         }
+        System.out.println(matchedFilePaths.size() + " files found.");
     }
 
     private static String getDirectory(){
