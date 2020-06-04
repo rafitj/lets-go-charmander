@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.io.File;
 
@@ -8,47 +6,68 @@ public class FindFiles {
     private static Map<String, ArrayList<String>>  options;
     private static String fileToFind;
     private static ArrayList<String> matchedFilePaths = new ArrayList<>();
+    private static ArrayList<String> matchables = new ArrayList<>();
+    private static String regex;
 
     public static void main(String[] args) {
         ArgsData processedArgs = ProcessArgs.process(args);
         if(processedArgs.status == ArgsStatus.VALID) {
             options = processedArgs.options;
-             fileToFind = processedArgs.fileToFind;
+            fileToFind = processedArgs.fileToFind;
 
             String directory = getDirectory();
-            String regex = formRegex();
-
             File mainFile = new File(directory);
             File[] fileList = mainFile.listFiles();
             if (!mainFile.canRead()){
                 System.out.println("No read access for directory: " + mainFile.getName());
+                System.exit(0);
             }
-            else {
-                System.out.println("Searching for files in directory: " + directory);
-                matchFiles(fileList, regex);
-                printMatchedFiles();
+            printStartText(directory);
+            System.out.println("Searching directory: " + directory);
+            if (options.containsKey("reg")){
+                regex = formRegex();
+                matchFiles(fileList, true);
+            } else {
+                matchables = formMatchables();
+                matchFiles(fileList,false);
             }
-
+            printMatchedFiles();
         }
     }
 
-    private static void matchFiles(File[] fileList, String regex){
+    private static void printStartText(String rootDir) {
+        System.out.println("===============Find Files===============");
+        System.out.println("ROOT-DIRECTORY: " + rootDir);
+        if (options.containsKey("reg")) {
+            regex = formRegex();
+            System.out.println("REGEX: " + regex);
+        } else {
+            matchables = formMatchables();
+            System.out.println("QUERY: " + String.join(" or ", matchables));
+        }
+        System.out.println("RECURSIVE: " + options.containsKey("r"));
+        System.out.println();
+        System.out.println("===============Search Log===============");
+    }
+
+    private static void matchFiles(File[] fileList, boolean isReg){
         if(options.containsKey("r")){
             for (File f: fileList) {
-                recurseMatchFile(f,regex);
+                recurseMatchFile(f,isReg);
             }
         } else {
             for (File f: fileList) {
-                if (f.isFile() && compare(f.getName(),regex)) {
+                if (f.isFile() && compare(f.getName(),isReg)) {
                     matchedFilePaths.add(f.getAbsolutePath());
                 }
             }
         }
     }
 
-    private static void recurseMatchFile(File file, String regex) {
+    private static void recurseMatchFile(File file, boolean isReg) {
         if (!file.isDirectory()){
-            if (compare(file.getName(),regex)) {
+            if (compare(file.getName(),isReg)) {
+                System.out.println("Found match!");
                 matchedFilePaths.add(file.getAbsolutePath());
             }
         } else {
@@ -56,9 +75,10 @@ public class FindFiles {
             if (!fileHandler.canRead()){
                 System.out.println("Skipping directory: "+ fileHandler.getName() + " No read access." );
             } else {
+                System.out.println("Searching directory: "+ fileHandler.getAbsolutePath() );
                 File[] fileList = fileHandler.listFiles();
                 for (File f: fileList) {
-                    recurseMatchFile(f,regex);
+                    recurseMatchFile(f,isReg);
                 }
             }
 
@@ -67,10 +87,18 @@ public class FindFiles {
 
 
     private static void printMatchedFiles() {
-        for (String filePath: matchedFilePaths) {
-            System.out.println(filePath);
+        System.out.println();
+        if(matchedFilePaths.size() > 0) {
+            System.out.println("===============Matched Files===============");
+            System.out.println("TOTAL: " + matchedFilePaths.size());
+            System.out.println("FILE PATHS: ");
+            for (String filePath: matchedFilePaths) {
+                System.out.println(filePath);
+            }
+        } else {
+            System.out.println("===============No Files Found===============");
+            System.out.println("Please try again.");
         }
-        System.out.println(matchedFilePaths.size() + " files found.");
     }
 
     private static String getDirectory(){
@@ -85,11 +113,28 @@ public class FindFiles {
         return fileToFind+getExtRegex();
     }
 
-    private static boolean compare(String fileName, String match) {
-        if (options.containsKey("reg")) {
-            return fileName.matches(match);
+    private static  ArrayList<String> formMatchables(){
+        ArrayList<String> matchables = new ArrayList<>();
+        if (options.containsKey("ext")){
+            for (String e: options.get("ext")) {
+                matchables.add(fileToFind+e);
+            }
+        } else {
+            matchables.add(fileToFind);
         }
-        return fileName.equals(match);
+        return matchables;
+    }
+
+    private static boolean compare(String fileName,  boolean isReg) {
+        if (isReg) {
+            return fileName.matches(regex);
+        }
+        for (String match: matchables) {
+            if (fileName.equals(match)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private  static String getExtRegex() {
