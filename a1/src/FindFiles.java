@@ -34,7 +34,7 @@ public class FindFiles {
             }
         } else {
             for (File f: fileList) {
-                if (f.getName().matches(regex)) {
+                if (compare(f.getName(),regex)) {
                     matchedFilePaths.add(f.getAbsolutePath());
                 }
             }
@@ -44,7 +44,7 @@ public class FindFiles {
     private static void recurseMatchFile(File file, String regex) {
         System.out.println(file.getName());
         if (!file.isDirectory()){
-            if (file.getName().matches(regex)) {
+            if (compare(file.getName(),regex)) {
                 matchedFilePaths.add(file.getAbsolutePath());
             }
         } else {
@@ -72,11 +72,14 @@ public class FindFiles {
     }
 
     private static String formRegex(){
+        return fileToFind+getExtRegex();
+    }
+
+    private static boolean compare(String fileName, String match) {
         if (options.containsKey("reg")) {
-            return fileToFind+getExtRegex();
-        } else {
-            return fileToFind+getExtRegex();
+            return fileName.matches(match);
         }
+        return fileName.equals(match);
     }
 
     private  static String getExtRegex() {
