@@ -19,7 +19,9 @@ public class FindFiles {
             File mainFile = new File(directory);
             File[] fileList = mainFile.listFiles();
             if (!mainFile.canRead()){
-                System.out.println("No read access for directory: " + mainFile.getName());
+                System.out.println("ERROR: Cannot start search");
+                System.out.println(">> No results found because no read access for start directory: " + mainFile.getName());
+                System.out.println(">> Please search a different directory or change its' access");
                 System.exit(0);
             }
             printStartText(directory);
@@ -36,7 +38,7 @@ public class FindFiles {
     }
 
     private static void printStartText(String rootDir) {
-        System.out.println("===============Find Files===============");
+        System.out.println("=============== Find Files ===============");
         System.out.println("ROOT-DIRECTORY: " + rootDir);
         if (options.containsKey("reg")) {
             regex = formRegex();
@@ -47,7 +49,7 @@ public class FindFiles {
         }
         System.out.println("RECURSIVE: " + options.containsKey("r"));
         System.out.println();
-        System.out.println("===============Search Log===============");
+        System.out.println("=============== Search Log ===============");
     }
 
     private static void matchFiles(File[] fileList, boolean isReg){
@@ -58,6 +60,7 @@ public class FindFiles {
         } else {
             for (File f: fileList) {
                 if (f.isFile() && compare(f.getName(),isReg)) {
+                    System.out.println(">>> Found Match: " + f.getName());
                     matchedFilePaths.add(f.getAbsolutePath());
                 }
             }
@@ -67,15 +70,15 @@ public class FindFiles {
     private static void recurseMatchFile(File file, boolean isReg) {
         if (!file.isDirectory()){
             if (compare(file.getName(),isReg)) {
-                System.out.println("Found match!");
+                System.out.println(">>> Found Match: " + file.getName());
                 matchedFilePaths.add(file.getAbsolutePath());
             }
         } else {
             File fileHandler = new File(file.getAbsolutePath());
             if (!fileHandler.canRead()){
-                System.out.println("Skipping directory: "+ fileHandler.getName() + " No read access." );
+                System.out.println("WARNING: Skipping directory "+ fileHandler.getAbsolutePath() + " No read access." );
             } else {
-                System.out.println("Searching directory: "+ fileHandler.getAbsolutePath() );
+                System.out.println("Searching directory: "+ fileHandler.getAbsolutePath());
                 File[] fileList = fileHandler.listFiles();
                 for (File f: fileList) {
                     recurseMatchFile(f,isReg);
@@ -89,15 +92,15 @@ public class FindFiles {
     private static void printMatchedFiles() {
         System.out.println();
         if(matchedFilePaths.size() > 0) {
-            System.out.println("===============Matched Files===============");
+            System.out.println("=============== Matched Files ===============");
             System.out.println("TOTAL: " + matchedFilePaths.size());
             System.out.println("FILE PATHS: ");
             for (String filePath: matchedFilePaths) {
                 System.out.println(filePath);
             }
         } else {
-            System.out.println("===============No Files Found===============");
-            System.out.println("Please try again.");
+            System.out.println("=============== No Files Found ===============");
+            System.out.println("We couldn't find anything with these options in this directory. Please try again.");
         }
     }
 

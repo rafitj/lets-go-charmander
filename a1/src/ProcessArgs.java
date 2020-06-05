@@ -16,7 +16,7 @@ public class ProcessArgs {
         put("reg", new FindFileArg("reg", "find files using [filietofind] argument as a regular expression", 0, 0));
         put("r", new FindFileArg("r", "execute the command recursively in subfiles", 0, 0));
         put("dir", new FindFileArg("dir", "find the files the specified directory [directory] - the default directory is the calling directory", 1, 1));
-        put("ext", new FindFileArg("ext", "find the files matching [filetofind] and with the given extensions [ext1, ext2,...]", 1, 99999));
+        put("ext", new FindFileArg("ext", "find the files matching [filetofind] and with the given extensions [ext1, ext2,...]", 1, Integer.MAX_VALUE));
     }};
 
     private static String error;
@@ -91,6 +91,11 @@ public class ProcessArgs {
     public static ArgsData process(String[] args){
         if (args.length == 0) {
             System.out.println("Need folder to find");
+            ProcessArgs.printHelp();
+            return new ArgsData("", new HashMap<>(), ArgsStatus.INVALID);
+        }
+        if (args[0].startsWith("-")) {
+            System.out.println("No filename to find provided (filename cannot start with '-')");
             ProcessArgs.printHelp();
             return new ArgsData("", new HashMap<>(), ArgsStatus.INVALID);
         }
