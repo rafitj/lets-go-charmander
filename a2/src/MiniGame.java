@@ -66,8 +66,6 @@ public class MiniGame extends Application {
         Scene homeScene = new Scene(homeGroup, width, height);
         setBackground(homeGroup);
 
-
-
         // Render game logo
         Image gameLogo = new Image("assets/GameLogo.png", 650, 800 , true, true);
         ImageView logoView = new ImageView(gameLogo);
@@ -105,6 +103,21 @@ public class MiniGame extends Application {
                 gamestate = GameState.PLAY_GAME;
                 updateStage(stage);
             }
+            if (keyEvent.getCode() == KeyCode.DIGIT0) {
+                gameLevel = GameLevel.ONE;
+                gamestate = GameState.PLAY_GAME;
+                updateStage(stage);
+            }
+            if (keyEvent.getCode() == KeyCode.DIGIT2) {
+                gameLevel = GameLevel.TWO;
+                gamestate = GameState.PLAY_GAME;
+                updateStage(stage);
+            }
+            if (keyEvent.getCode() == KeyCode.DIGIT3) {
+                gameLevel = GameLevel.THREE;
+                gamestate = GameState.PLAY_GAME;
+                updateStage(stage);
+            }
         });
 
         Label credits = new Label("Created by Rafit Jamil 2078514");
@@ -125,22 +138,35 @@ public class MiniGame extends Application {
         Scene gameScene = new Scene(gameGroup, width, height);
         setBackground(gameGroup);
 
-        // Render sprite
+        // Render player
         Group playSprite = lvl.player.sprite.getSprite();
         gameGroup.getChildren().add(playSprite);
 
-        String dir = "left";
-        Label l = new Label(dir);
-        gameGroup.getChildren().add(l);
+
+        // Level Details
+        Label levelText = new Label("Level " + lvl.level);
+        levelText.setTextFill(Color.WHITE);
+        levelText.setOpacity(0.9);
+        levelText.setStyle("-fx-font: 30 arial; -fx-font-weight: bold;");
+        levelText.setLayoutX(600);
+        levelText.setLayoutY(25);
+        Label levelInfo = new Label(lvl.getLevelInfo());
+        levelInfo.setTextFill(Color.WHITE);
+        levelInfo.setOpacity(0.9);
+        levelInfo.setStyle("-fx-font: 45 arial; -fx-font-weight: bold;");
+        levelInfo.setLayoutX(500);
+        levelInfo.setLayoutY(60);
+        gameGroup.getChildren().addAll(levelText, levelInfo);
+
+        // Spawn enemies
+        lvl.spawnEnemies();
 
         gameScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.LEFT) {
-//                spriteView.setScaleX(1);
-                l.setText("left");
+                lvl.player.fireLeft();
             }
             if (keyEvent.getCode() == KeyCode.RIGHT){
-//                spriteView.setScaleX(-1);
-                l.setText("right");
+                lvl.player.fireRight();
             }
         });
 

@@ -1,8 +1,8 @@
 public class Player {
     private int lives = 3;
-    private int evolutionStage = 1;
+    private int evolutionStage;
     private String evolution = "Charmander";
-    public Sprite sprite = new Sprite(getEvolution());
+    public Sprite sprite;
 
     public int getLives(){
         return lives;
@@ -17,8 +17,8 @@ public class Player {
         lives = 3;
     }
 
-    public void evolve() {
-        evolutionStage += 1;
+    Player(int stage) {
+        evolutionStage = stage;
         switch (evolutionStage){
             case 1:
                 evolution="Charmander";
@@ -37,6 +37,10 @@ public class Player {
         return evolution;
     }
 
-
-
+    public void fireLeft() {
+        sprite.turnLeft(evolutionStage);
+    }
+    public void fireRight() {
+        sprite.turnRight(evolutionStage);
+    }
 }
