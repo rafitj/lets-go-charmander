@@ -22,6 +22,7 @@ enum GameState {
     PLAY_GAME,
     LEVEL_COMPLETE,
     GAME_OVER,
+    GAME_WIN,
     QUIT
 }
 
@@ -33,7 +34,7 @@ public class MiniGame extends Application {
     private Stage globalStage;
     public static Level lvl = new Level();
     private static Image bgimage = new Image("assets/GameBackground.png", width,height , true, true);
-
+    private MediaPlayer bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString()));;
     private Group currentGroup;
     private Scene currentScene;
 
@@ -72,6 +73,10 @@ public class MiniGame extends Application {
     }
 
     private void renderLevelComplete(){
+        bgMusic.stop();
+        bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Evolve.mp3").toURI().toString()));
+        bgMusic.play();
+
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
         currentGroup.getChildren().add(new Rectangle(width,height,Color.BLACK));
@@ -111,7 +116,6 @@ public class MiniGame extends Application {
                 } else if (gameLevel == GameLevel.THREE) {
                     gameLevel = GameLevel.ONE;
                 }
-                System.out.println(gameLevel);
                 updateStage();
             }
         });
@@ -130,10 +134,9 @@ public class MiniGame extends Application {
     }
 
     private void renderHome(){
-
-        Media music = new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString());
-        MediaPlayer bgMusic = new MediaPlayer(music);
-//        bgMusic.play();
+        bgMusic.stop();
+        bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString()));
+        bgMusic.play();
 
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
@@ -206,11 +209,16 @@ public class MiniGame extends Application {
     }
 
     private void renderGame() {
+        bgMusic.stop();
+        bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Level"+(gameLevel.ordinal()+1)+"Theme.mp3").toURI().toString()));
+        bgMusic.play();
+
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
         setBackground();
-
+        int lvlScore = lvl.player != null ? lvl.player.getScore() : 0;
         lvl.newLevel(this, gameLevel, currentGroup);
+        lvl.player.setScore(lvlScore);
 
         // Render player
         Group playSprite = lvl.player.sprite.getSprite();
@@ -255,12 +263,18 @@ public class MiniGame extends Application {
     }
 
     private void renderGameOver() {
+        bgMusic.stop();
+        bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/GameOverTheme.mp3").toURI().toString()));
+        bgMusic.play();
+        bgMusic.setCycleCount(MediaPlayer.INDEFINITE);
+
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
         currentGroup.getChildren().add(new Rectangle(width,height,Color.BLACK));
 
         // Show level enemies
         currentGroup.getChildren().add(lvl.getLevelEnemiesSprites());
+        lvl.player.setScore(0);
 
         // Game over text
         Text gameOverText = new Text("Game Over!");

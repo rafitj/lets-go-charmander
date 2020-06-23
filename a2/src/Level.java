@@ -29,19 +29,19 @@ public class Level {
 
     private HashMap<GameLevel, ArrayList<Image>> enemy_map;
 
-    private static Image loadPokemonImg(String pokemon){
-        return new Image("assets/pokemon/"+pokemon+".gif",250,250,true,true);
+    private static Image loadPokemonImg(String pokemon, double size){
+        return new Image("assets/pokemon/"+pokemon+".gif",size,size,true,true);
     }
 
 
-    private final static ArrayList<Image> LEVEL_1_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Geodude"),
-                                                         loadPokemonImg("Grimer"),loadPokemonImg("Magnemite")));
+    private final static ArrayList<Image> LEVEL_1_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Geodude", 300),
+                                                         loadPokemonImg("Grimer", 250),loadPokemonImg("Magnemite", 240)));
 
-    private final static ArrayList<Image> LEVEL_2_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Steelix"),
-                                                            loadPokemonImg("Forretress"),loadPokemonImg("Skarmory")));
+    private final static ArrayList<Image> LEVEL_2_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Steelix", 400),
+                                                            loadPokemonImg("Forretress", 240),loadPokemonImg("Skarmory", 300)));
 
-    private final static ArrayList<Image> LEVEL_3_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Gardevoir"),
-                                                        loadPokemonImg("Salamence"),loadPokemonImg("Ludicolo")));
+    private final static ArrayList<Image> LEVEL_3_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Gardevoir", 300),
+                                                        loadPokemonImg("Salamence", 300),loadPokemonImg("Ludicolo", 300)));
 
     Level(){
         enemies = new ArrayList<>();
@@ -56,9 +56,14 @@ public class Level {
 
     public void updateEnemyCount(Enemy e) {
        enemies.remove(e);
-       enemiesLeftText.setText(enemies.size() + " Pokemon Left!");
+       enemiesLeftText.setText(enemies.size() + " Pokemon Left");
        if (enemies.size() == 0) {
-          game.setGamestate(GameState.LEVEL_COMPLETE);
+           if(level == 3) {
+               game.setGamestate(GameState.GAME_WIN);
+           } else {
+               game.setGamestate(GameState.LEVEL_COMPLETE);
+
+           }
           game.updateStage();
        }
     }
@@ -80,7 +85,7 @@ public class Level {
 
     public Group getEnemiesLeft(){
         Group g = new Group();
-        enemiesLeftText = new Text(enemies.size() + " Pokemon Left!");
+        enemiesLeftText = new Text(enemies.size() + " Pokemon Left");
         enemiesLeftText.setFill(Color.BLACK);
         enemiesLeftText.setOpacity(0.9);
         enemiesLeftText.setStyle("-fx-font: 30 arial; -fx-font-weight: bold;");
@@ -108,16 +113,18 @@ public class Level {
 
 
     public void spawnEnemies(Group g) {
+        int numEnemies = enemies.size();
+        ArrayList<Enemy> enemiesToSpawn = (ArrayList<Enemy>)enemies.clone();
         Random rand = new Random();
         AnimationTimer timer = new AnimationTimer() {
             private int i = 0;
             private long lastSpawn = 0 ;
             @Override
             public void handle(long now) {
-                if (i == enemies.size() || enemies.size() == 0){
+                if (i == numEnemies){
                     this.stop();
-                } else if (now/1000000000 - lastSpawn/1000000000 >= (5-level)) {
-                    enemies.get(i).spawn(rand.nextBoolean(), g);
+                } else if (now/1000000000 - lastSpawn/1000000000 >= (6-(level*2))) {
+                    enemiesToSpawn.get(i).spawn(rand.nextBoolean(), g);
                     i+=1;
                     lastSpawn = now;
                 }

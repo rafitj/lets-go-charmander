@@ -1,6 +1,10 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.io.File;
 
 public class Enemy {
     public int speed = 1;
@@ -10,6 +14,7 @@ public class Enemy {
     private Group spriteGroup ;
     private Level gameLevel;
     public boolean spawned;
+    public MediaPlayer defeatedSound = new MediaPlayer(new Media(new File("src/assets/audio/enemyDefeat.mp3").toURI().toString()));
 
     Enemy(Image pokemon, Level level, Player pl, Group pGroup) {
         player = pl;
@@ -27,6 +32,7 @@ public class Enemy {
         spawned = true;
         parentGroup = g;
         if (isLeft) {
+            sprite.spriteView.setScaleX(-1);
             sprite.spriteView.setLayoutX(0);
         } else {
             sprite.spriteView.setLayoutX(1280);
@@ -46,7 +52,7 @@ public class Enemy {
                     shuffleBack(isLeft);
                     this.stop();
                 } else {
-                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()+(multipler*speed));
+                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()+(multipler*(speed*2)));
                 }
             }
         };
@@ -56,12 +62,14 @@ public class Enemy {
     private void shuffleBack(boolean isLeft) {
         int multipler = isLeft ? 1 : -1;
         AnimationTimer timer = new AnimationTimer() {
+            int i = 0;
             @Override
             public void handle(long now) {
-                if ((isLeft && sprite.spriteView.getTranslateX() < 600) || (!isLeft && sprite.spriteView.getTranslateX() > - 600)) {
+                if (i > 250) {
                     attackPlayer(isLeft);
                     this.stop();
                 } else {
+                    i+=5;
                     sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(0.5*multipler));
                 }
             }
@@ -70,6 +78,8 @@ public class Enemy {
     }
 
     public void defeated(){
+        defeatedSound.stop();
+        defeatedSound.play();
         parentGroup.getChildren().remove(spriteGroup);
         spriteGroup.getChildren().clear();
         gameLevel.updateEnemyCount(this);

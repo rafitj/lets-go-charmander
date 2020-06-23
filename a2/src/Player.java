@@ -2,17 +2,21 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Player {
     private ArrayList<Enemy> enemies;
-    private int lives = 100;
+    private int lives = 3;
     private int score = 0;
     private int evolutionStage;
     public Sprite sprite;
@@ -24,10 +28,13 @@ public class Player {
     private Text scoretext = new Text("0 EXP");
     private MiniGame game;
     private ArrayList<String> evolutions =  new ArrayList<>(List.of("Charmander", "Charmeleon", "Charizard"));
+    private Image fireImg;
+    private MediaPlayer fireSound;
 
     private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",300,300,true,true);
     private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",300,300,true,true);
     private static Image Charizard =  new Image("assets/pokemon/Charizard.gif",500,500,true,true);
+
 
     public void loseLife(){
         if (lives == 0) {
@@ -48,19 +55,30 @@ public class Player {
         }
     }
 
+    public int getScore(){
+        return score;
+    }
+
+    public void setScore(int s) {
+        score = s;
+        scorebar.setWidth(s);
+    }
+
+
+
     public void gainXP() {
-        score += 30;
+        score += 10;
         scoretext.setText(score + " XP");
         AnimationTimer timer = new AnimationTimer() {
-            int i = 0;
+            int i = 1;
             @Override
             public void handle(long now) {
                 if (scorebar.getWidth() > score) {
                     this.stop();
                 } else {
                     scorebar.setWidth(scorebar.getWidth()+1);
-                    if (i <= 30) {
-                        scoretext.setText((score-30+i) + " XP");
+                    if (i <= 10) {
+                        scoretext.setText((score-10+i) + " XP");
                         i+=1;
                     }
                 }
@@ -70,10 +88,10 @@ public class Player {
     }
 
     public void loseXP() {
-        score -= 15;
+        score -= 5;
         scoretext.setText(score + " XP");
         AnimationTimer timer = new AnimationTimer() {
-            int i = 15;
+            int i = 5;
             @Override
             public void handle(long now) {
                 if (scorebar.getWidth() < score) {
@@ -81,7 +99,7 @@ public class Player {
                 } else {
                     scorebar.setWidth(scorebar.getWidth()-1);
                     if (i > 0) {
-                        scoretext.setText((score+15-i) + " XP");
+                        scoretext.setText((score+5-i) + " XP");
                         i-=1;
                     }
                 }
@@ -117,6 +135,8 @@ public class Player {
     Player(MiniGame mg, int stage) {
         game = mg;
         evolutionStage = stage;
+        fireImg = new Image("assets/fire/fire"+evolutionStage+".gif", 200, 200, true, true);
+        fireSound = new MediaPlayer(new Media(new File("src/assets/audio/fire"+evolutionStage+".mp3").toURI().toString()));
         Image sprtieImg;
         switch (evolutionStage){
             case 1:
@@ -137,10 +157,10 @@ public class Player {
     }
 
     public void fireLeft(Group parentGroup) {
-        int fireStage = evolutionStage;
         sprite.spriteView.setScaleX(1);
-        Image fireImg = new Image("assets/fire/fire1.gif", 200, 200, true, true);
-        ImageView fireView = createFireballView(fireImg,90, 425, 300);
+        fireSound.stop();
+        fireSound.play();
+        ImageView fireView = createFireballView(fireImg,90, 500, 280);
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
         parentGroup.getChildren().add(fireGroup);
@@ -179,10 +199,10 @@ public class Player {
     }
 
     public void fireRight(Group parentGroup) {
-        int fireStage = evolutionStage;
         sprite.spriteView.setScaleX(-1);
-        Image fireImg = new Image("assets/fire/fire"+fireStage+".gif", 200, 200, true, true);
-        ImageView fireView = createFireballView(fireImg, -90, 575, 300);
+        fireSound.stop();
+        fireSound.play();
+        ImageView fireView = createFireballView(fireImg, -90, 650, 280);
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
 
@@ -268,7 +288,10 @@ public class Player {
     }
 
     public  ImageView evolve(Text evolveText){
-        evolveText.setText("What? " + evolutions.get(evolutionStage) + " is evolving!");
+        String pokemon = evolutions.get(evolutionStage-1);
+        MediaPlayer sound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".mp3").toURI().toString()));
+        sound.play();
+        evolveText.setText("What? " + evolutions.get(evolutionStage-1) + " is evolving!");
         ImageView evolveView;
        if (evolutionStage == 1) {
            evolveView = new ImageView(Charmander);
@@ -290,8 +313,13 @@ public class Player {
             public void handle(long now) {
                 if (600000000-(i*10000000) < 1500000) {
                     iv.setImage(b);
-                    evolveText.setText("Congrats! " + evolutions.get(evolutionStage) + " evolved!");
+                    String pokemon = evolutions.get(evolutionStage);
+                    MediaPlayer evolvedSound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".mp3").toURI().toString()));
+                    evolvedSound.play();
+                    evolveText.setText("Congrats! " + evolutions.get(evolutionStage) + " evolved into " + pokemon + "!");
+                    evolveText.setLayoutX(150);
                     evolutionStage += 1;
+                    fireImg = new Image("assets/fire/fire"+evolutionStage+".gif", 200, 200, true, true);
                     this.stop();
                 } else if (now-lastUpdate > 400000000-(i*25000000)) {
                     lastUpdate = now;
