@@ -1,10 +1,10 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,10 +14,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+import java.io.File;
 
 enum GameState {
     HOME,
     PLAY_GAME,
+    LEVEL_COMPLETE,
     GAME_OVER,
     QUIT
 }
@@ -27,27 +29,37 @@ public class MiniGame extends Application {
     private final int height = 720;
     private GameState gamestate = GameState.HOME;
     private GameLevel gameLevel = GameLevel.ONE;
+    private Stage globalStage;
+    private static Level lvl = new Level();
 
     @Override
     public void start(Stage stage) {
-        stage.setResizable(false);
-        updateStage(stage);
+        globalStage = stage;
+        globalStage.setResizable(false);
+        updateStage();
     }
 
-    private void updateStage(Stage stage) {
+    private void updateStage() {
         switch (gamestate) {
             case QUIT:
-                stage.close();
+                globalStage.close();
                 break;
             case GAME_OVER:
-                renderGameOver(stage);
+                renderGameOver();
                 break;
             case PLAY_GAME:
-                renderGame(stage);
+                renderGame();
+                break;
+            case LEVEL_COMPLETE:
+                renderLevelComplete();
                 break;
             default:
-                renderHome(stage);
+                renderHome();
         }
+    }
+
+    private void renderLevelComplete(){
+
     }
 
     private void setBackground(Group group){
@@ -61,7 +73,12 @@ public class MiniGame extends Application {
         stage.show();
     }
 
-    private void renderHome(Stage stage){
+    private void renderHome(){
+
+        Media music = new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString());
+        MediaPlayer bgMusic = new MediaPlayer(music);
+        bgMusic.play();
+
         Group homeGroup = new Group();
         Scene homeScene = new Scene(homeGroup, width, height);
         setBackground(homeGroup);
@@ -75,7 +92,8 @@ public class MiniGame extends Application {
         homeGroup.getChildren().add(logoView);
 
         // Render sprite
-        Group playSprite = new Sprite("Charmander").getSprite();
+        Player player = new Player(gameLevel.ordinal());
+        Group playSprite = player.sprite.getSprite();
         homeGroup.getChildren().add(playSprite);
 
         StackPane enterBox = createTextBox("Press Enter to Start",Color.WHITE, Color.BLACK);
@@ -97,26 +115,26 @@ public class MiniGame extends Application {
         homeScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.Q) {
                 gamestate = GameState.QUIT;
-                updateStage(stage);
+                updateStage();
             }
             if (keyEvent.getCode() == KeyCode.ENTER){
                 gamestate = GameState.PLAY_GAME;
-                updateStage(stage);
+                updateStage();
             }
             if (keyEvent.getCode() == KeyCode.DIGIT0) {
                 gameLevel = GameLevel.ONE;
                 gamestate = GameState.PLAY_GAME;
-                updateStage(stage);
+                updateStage();
             }
             if (keyEvent.getCode() == KeyCode.DIGIT2) {
                 gameLevel = GameLevel.TWO;
                 gamestate = GameState.PLAY_GAME;
-                updateStage(stage);
+                updateStage();
             }
             if (keyEvent.getCode() == KeyCode.DIGIT3) {
                 gameLevel = GameLevel.THREE;
                 gamestate = GameState.PLAY_GAME;
-                updateStage(stage);
+                updateStage();
             }
         });
 
@@ -128,15 +146,15 @@ public class MiniGame extends Application {
         credits.setLayoutY(25);
         homeGroup.getChildren().add(credits);
 
-        setStage(stage,homeScene);
+        setStage(globalStage,homeScene);
     }
 
-    private void renderGame(Stage stage) {
-        Level lvl = new Level(gameLevel);
-
+    private void renderGame() {
         Group gameGroup = new Group();
         Scene gameScene = new Scene(gameGroup, width, height);
         setBackground(gameGroup);
+
+        lvl.newLevel(gameLevel, gameGroup);
 
         // Render player
         Group playSprite = lvl.player.sprite.getSprite();
@@ -158,28 +176,32 @@ public class MiniGame extends Application {
         levelInfo.setLayoutY(60);
         gameGroup.getChildren().addAll(levelText, levelInfo);
 
+        // HP and Score
+        gameGroup.getChildren().add(lvl.player.getPlayerHPGroup());
+        gameGroup.getChildren().add(lvl.player.getScoregroup());
+
         // Spawn enemies
-        lvl.spawnEnemies();
+         lvl.spawnEnemies(gameGroup);
 
         gameScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.LEFT) {
-                lvl.player.fireLeft();
+                lvl.player.fireLeft(gameGroup);
             }
             if (keyEvent.getCode() == KeyCode.RIGHT){
-                lvl.player.fireRight();
+                lvl.player.fireRight(gameGroup);
             }
         });
 
-        setStage(stage,gameScene);
+        setStage(globalStage,gameScene);
     }
 
-    private void renderGameOver(Stage stage) {
+    private void renderGameOver() {
 
     }
 
     private StackPane createTextBox(String str, Color fill, Color textFill){
         StackPane textbox = new StackPane();
-        Rectangle rectangle = new Rectangle(300,70,fill);
+        Rectangle rectangle = new Rectangle(300,70 ,fill);
         rectangle.setStroke(Color.rgb(170,127,82));
         rectangle.setStrokeWidth(3);
         rectangle.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 30, 0, 0, 0); ");
