@@ -7,11 +7,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Player {
     private ArrayList<Enemy> enemies;
-    private int lives = 3;
+    private int lives = 100;
     private int score = 0;
     private int evolutionStage;
     public Sprite sprite;
@@ -21,18 +22,21 @@ public class Player {
     private Rectangle scorebar = new Rectangle(0, 10, Color.LIGHTBLUE);
     private Group scoregroup = new Group();
     private Text scoretext = new Text("0 EXP");
+    private MiniGame game;
+    private ArrayList<String> evolutions =  new ArrayList<>(List.of("Charmander", "Charmeleon", "Charizard"));
 
     private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",300,300,true,true);
-    private static Image Charmeleon =  new Image("assets/pokemon/Charmander.gif",300,300,true,true);
-    private static Image  Charizard =  new Image("assets/pokemon/Charmander.gif",300,300,true,true);
-
-    public int getLives(){
-        return lives;
-    }
+    private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",300,300,true,true);
+    private static Image Charizard =  new Image("assets/pokemon/Charizard.gif",500,500,true,true);
 
     public void loseLife(){
         if (lives == 0) {
-
+            for (Enemy e : enemies) {
+                e.end();
+            }
+            resetPlayer();
+            game.setGamestate(GameState.GAME_OVER);
+            game.updateStage();
         } else {
             lives -= 1;
             animateHealthBar();
@@ -46,16 +50,15 @@ public class Player {
 
     public void gainXP() {
         score += 30;
-        animateXPBar();
         scoretext.setText(score + " XP");
         AnimationTimer timer = new AnimationTimer() {
             int i = 0;
             @Override
             public void handle(long now) {
-                if (scorebar.getWidth() < scorebar.getWidth()+30) {
+                if (scorebar.getWidth() > score) {
                     this.stop();
                 } else {
-                    scorebar.setWidth(scorebar.getWidth()-1);
+                    scorebar.setWidth(scorebar.getWidth()+1);
                     if (i <= 30) {
                         scoretext.setText((score-30+i) + " XP");
                         i+=1;
@@ -73,7 +76,7 @@ public class Player {
             int i = 15;
             @Override
             public void handle(long now) {
-                if (scorebar.getWidth() < scorebar.getWidth()-15) {
+                if (scorebar.getWidth() < score) {
                     this.stop();
                 } else {
                     scorebar.setWidth(scorebar.getWidth()-1);
@@ -85,10 +88,6 @@ public class Player {
             }
         };
         timer.start();
-    }
-
-    private void animateXPBar(){
-
     }
 
     private void animateHealthBar() {
@@ -115,7 +114,8 @@ public class Player {
         lives = 3;
     }
 
-    Player(int stage) {
+    Player(MiniGame mg, int stage) {
+        game = mg;
         evolutionStage = stage;
         Image sprtieImg;
         switch (evolutionStage){
@@ -139,26 +139,38 @@ public class Player {
     public void fireLeft(Group parentGroup) {
         int fireStage = evolutionStage;
         sprite.spriteView.setScaleX(1);
-        Image fireImg = new Image("assets/fire/fire"+fireStage+".gif", 200, 200, true, true);
+        Image fireImg = new Image("assets/fire/fire1.gif", 200, 200, true, true);
         ImageView fireView = createFireballView(fireImg,90, 425, 300);
-        parentGroup.getChildren().add(fireView);
+        Group fireGroup = new Group();
+        fireGroup.getChildren().add(fireView);
+        parentGroup.getChildren().add(fireGroup);
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (fireView.getOpacity() < 0.05) {
-                    parentGroup.getChildren().remove(fireView);
+                    parentGroup.getChildren().remove(fireGroup);
                     loseXP();
                     this.stop();
                 } else {
-                    if (fireView.getTranslateX() < -150 ) {
+                    if (fireView.getTranslateX() < -250+(evolutionStage*50) ) {
                         fireView.setOpacity(fireView.getOpacity()-0.05);
                     }
-                    fireView.setTranslateX(fireView.getTranslateX()-1);
-//                    // Check if fireball hits any enemies
-//                    for (Enemy e : enemies) {
-//
-//                    }
+                    fireView.setTranslateX(fireView.getTranslateX()-10);
+                    // Check if fireball hits any enemies
+                    for (Enemy e : enemies) {
+                        if (!e.spawned) {
+                            continue;
+                        }
+                        if (fireGroup.intersects(e.sprite.spriteGroup.getBoundsInParent())){
+                            parentGroup.getChildren().remove(fireGroup);
+                            fireGroup.getChildren().clear();
+                            e.defeated();
+                            gainXP();
+                            this.stop();
+                            break;
+                        }
+                    }
                 }
             }
         };
@@ -171,21 +183,38 @@ public class Player {
         sprite.spriteView.setScaleX(-1);
         Image fireImg = new Image("assets/fire/fire"+fireStage+".gif", 200, 200, true, true);
         ImageView fireView = createFireballView(fireImg, -90, 575, 300);
-        parentGroup.getChildren().add(fireView);
+        Group fireGroup = new Group();
+        fireGroup.getChildren().add(fireView);
+
+        parentGroup.getChildren().add(fireGroup);
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (fireView.getOpacity() < 0.05) {
-                    parentGroup.getChildren().remove(fireView);
+                    parentGroup.getChildren().remove(fireGroup);
                     loseXP();
                     this.stop();
                 }
-                if (fireView.getTranslateX() > 150 ) {
+                if (fireView.getTranslateX() > 250-(evolutionStage*50)  ) {
                     fireView.setOpacity(fireView.getOpacity()-0.05);
                 }
-                fireView.setTranslateX(fireView.getTranslateX()+1);
+                fireView.setTranslateX(fireView.getTranslateX()+10);
                 // Check if fireball hits any enemies
+                // Check if fireball hits any enemies
+                for (Enemy e : enemies) {
+                    if (!e.spawned) {
+                        continue;
+                    }
+                    if (fireGroup.intersects(e.sprite.spriteGroup.getBoundsInParent())){
+                        parentGroup.getChildren().remove(fireGroup);
+                        fireGroup.getChildren().clear();
+                        e.defeated();
+                        gainXP();
+                        this.stop();
+                        break;
+                    }
+                }
             }
         };
         timer.start();
@@ -236,5 +265,45 @@ public class Player {
         scoregroup.setLayoutX(340);
         scoregroup.setLayoutY(660);
         return scoregroup;
+    }
+
+    public  ImageView evolve(Text evolveText){
+        evolveText.setText("What? " + evolutions.get(evolutionStage) + " is evolving!");
+        ImageView evolveView;
+       if (evolutionStage == 1) {
+           evolveView = new ImageView(Charmander);
+           toggle(evolveView,Charmander, Charmeleon,evolveText);
+       } else {
+           evolveView = new ImageView(Charmeleon);
+           toggle(evolveView,Charmeleon, Charizard,evolveText);
+       }
+       evolveView.setLayoutX(500);
+       evolveView.setLayoutY(180);
+       return evolveView;
+    }
+
+    private void toggle(ImageView iv, Image a, Image b, Text evolveText) {
+        AnimationTimer timer = new AnimationTimer() {
+            private int i = 1;
+            private long lastUpdate = 0;
+            @Override
+            public void handle(long now) {
+                if (600000000-(i*10000000) < 1500000) {
+                    iv.setImage(b);
+                    evolveText.setText("Congrats! " + evolutions.get(evolutionStage) + " evolved!");
+                    evolutionStage += 1;
+                    this.stop();
+                } else if (now-lastUpdate > 400000000-(i*25000000)) {
+                    lastUpdate = now;
+                    if (i%2==0) {
+                        iv.setImage(b);
+                    } else {
+                        iv.setImage(a);
+                    }
+                    i++;
+                }
+            }
+        };
+        timer.start();
     }
 }

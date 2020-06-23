@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -25,12 +26,16 @@ enum GameState {
 }
 
 public class MiniGame extends Application {
-    private final int width = 1280;
-    private final int height = 720;
+    private final static int width = 1280;
+    private final static int height = 720;
     private GameState gamestate = GameState.HOME;
     private GameLevel gameLevel = GameLevel.ONE;
     private Stage globalStage;
-    private static Level lvl = new Level();
+    public static Level lvl = new Level();
+    private static Image bgimage = new Image("assets/GameBackground.png", width,height , true, true);
+
+    private Group currentGroup;
+    private Scene currentScene;
 
     @Override
     public void start(Stage stage) {
@@ -39,7 +44,15 @@ public class MiniGame extends Application {
         updateStage();
     }
 
-    private void updateStage() {
+    public void setGamestate(GameState state) {
+        gamestate = state;
+    }
+
+    public void updateStage() {
+        if(currentGroup != null){
+            currentGroup.getChildren().removeAll();
+            currentGroup.getChildren().clear();
+        }
         switch (gamestate) {
             case QUIT:
                 globalStage.close();
@@ -59,29 +72,72 @@ public class MiniGame extends Application {
     }
 
     private void renderLevelComplete(){
+        currentGroup = new Group();
+        currentScene = new Scene(currentGroup, width, height);
+        currentGroup.getChildren().add(new Rectangle(width,height,Color.BLACK));
 
+        // Text
+        Text congratsText = new Text("Level " + (gameLevel.ordinal()+1) + " Complete!");
+        congratsText.setFill(Color.WHITE);
+        congratsText.setOpacity(0.8);
+        congratsText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
+        congratsText.setLayoutX(310);
+        congratsText.setLayoutY(150);
+        Text evolveText = new Text("What?");
+        evolveText.setFill(Color.WHITE);
+        evolveText.setOpacity(0.8);
+        evolveText.setStyle("-fx-font: 35 arial; -fx-font-weight: bold;");
+        evolveText.setLayoutX(350);
+        evolveText.setLayoutY(550);
+        Text instText = new Text("Press Enter to Continue or Q to Quit");
+        instText.setFill(Color.WHITE);
+        instText.setOpacity(0.8);
+        instText.setStyle("-fx-font: 25 arial; -fx-font-weight: bold;");
+        instText.setLayoutX(400);
+        instText.setLayoutY(600);
+        currentGroup.getChildren().addAll(congratsText, instText,evolveText,  lvl.player.evolve(evolveText));
+
+        currentScene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.Q) {
+                gamestate = GameState.QUIT;
+                updateStage();
+            }
+            if (keyEvent.getCode() == KeyCode.ENTER){
+                gamestate = GameState.PLAY_GAME;
+                if (gameLevel == GameLevel.ONE) {
+                    gameLevel = GameLevel.TWO;
+                } else if (gameLevel == GameLevel.TWO) {
+                    gameLevel = GameLevel.THREE;
+                } else if (gameLevel == GameLevel.THREE) {
+                    gameLevel = GameLevel.ONE;
+                }
+                System.out.println(gameLevel);
+                updateStage();
+            }
+        });
+
+        setStage();
     }
 
-    private void setBackground(Group group){
-        Image image = new Image("assets/GameBackground.png", width,height , true, true);
-        ImageView imageView = new ImageView(image);
-        group.getChildren().add(imageView);
+    private void setBackground(){
+        ImageView imageView = new ImageView(bgimage);
+        currentGroup.getChildren().add(imageView);
     }
 
-    private void setStage(Stage stage, Scene scene) {
-        stage.setScene(scene);
-        stage.show();
+    private void setStage() {
+        globalStage.setScene(currentScene);
+        globalStage.show();
     }
 
     private void renderHome(){
 
         Media music = new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString());
         MediaPlayer bgMusic = new MediaPlayer(music);
-        bgMusic.play();
+//        bgMusic.play();
 
-        Group homeGroup = new Group();
-        Scene homeScene = new Scene(homeGroup, width, height);
-        setBackground(homeGroup);
+        currentGroup = new Group();
+        currentScene = new Scene(currentGroup, width, height);
+        setBackground();
 
         // Render game logo
         Image gameLogo = new Image("assets/GameLogo.png", 650, 800 , true, true);
@@ -89,30 +145,30 @@ public class MiniGame extends Application {
         logoView.setLayoutX((width/2)-(gameLogo.getWidth()/2));
         logoView.setLayoutY(25);
         logoView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 30, 0, 0, 0);");
-        homeGroup.getChildren().add(logoView);
+        currentGroup.getChildren().add(logoView);
 
         // Render sprite
-        Player player = new Player(gameLevel.ordinal());
+        Player player = new Player(this, gameLevel.ordinal()+1);
         Group playSprite = player.sprite.getSprite();
-        homeGroup.getChildren().add(playSprite);
+        currentGroup.getChildren().add(playSprite);
 
         StackPane enterBox = createTextBox("Press Enter to Start",Color.WHITE, Color.BLACK);
         enterBox.setLayoutX(100);
         enterBox.setLayoutY(500);
-        homeGroup.getChildren().add(enterBox);
+        currentGroup.getChildren().add(enterBox);
 
         StackPane quitBox = createTextBox("Press Q to Quit", Color.WHITE, Color.BLACK);
         quitBox.setLayoutX(900);
         quitBox.setLayoutY(585);
-        homeGroup.getChildren().add(quitBox);
+        currentGroup.getChildren().add(quitBox);
 
         StackPane controls = createTextBox("Press ← OR → to Fire", Color.rgb(170,127,82), Color.WHITE);
         controls.setLayoutX(100);
         controls.setLayoutY(585);
-        homeGroup.getChildren().add(controls);
+        currentGroup.getChildren().add(controls);
 
 
-        homeScene.setOnKeyPressed(keyEvent -> {
+        currentScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.Q) {
                 gamestate = GameState.QUIT;
                 updateStage();
@@ -144,21 +200,21 @@ public class MiniGame extends Application {
         credits.setStyle("-fx-font: 16 arial; -fx-font-weight: bold;");
         credits.setLayoutX(1000);
         credits.setLayoutY(25);
-        homeGroup.getChildren().add(credits);
+        currentGroup.getChildren().add(credits);
 
-        setStage(globalStage,homeScene);
+        setStage();
     }
 
     private void renderGame() {
-        Group gameGroup = new Group();
-        Scene gameScene = new Scene(gameGroup, width, height);
-        setBackground(gameGroup);
+        currentGroup = new Group();
+        currentScene = new Scene(currentGroup, width, height);
+        setBackground();
 
-        lvl.newLevel(gameLevel, gameGroup);
+        lvl.newLevel(this, gameLevel, currentGroup);
 
         // Render player
         Group playSprite = lvl.player.sprite.getSprite();
-        gameGroup.getChildren().add(playSprite);
+        currentGroup.getChildren().add(playSprite);
 
 
         // Level Details
@@ -174,29 +230,67 @@ public class MiniGame extends Application {
         levelInfo.setStyle("-fx-font: 45 arial; -fx-font-weight: bold;");
         levelInfo.setLayoutX(500);
         levelInfo.setLayoutY(60);
-        gameGroup.getChildren().addAll(levelText, levelInfo);
+        currentGroup.getChildren().addAll(levelText, levelInfo);
 
         // HP and Score
-        gameGroup.getChildren().add(lvl.player.getPlayerHPGroup());
-        gameGroup.getChildren().add(lvl.player.getScoregroup());
+        currentGroup.getChildren().add(lvl.player.getPlayerHPGroup());
+        currentGroup.getChildren().add(lvl.player.getScoregroup());
 
         // Spawn enemies
-         lvl.spawnEnemies(gameGroup);
+         lvl.spawnEnemies(currentGroup);
 
-        gameScene.setOnKeyPressed(keyEvent -> {
+         // Enemies left
+        currentGroup.getChildren().add(lvl.getEnemiesLeft());
+
+        currentScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.LEFT) {
-                lvl.player.fireLeft(gameGroup);
+                lvl.player.fireLeft(currentGroup);
             }
             if (keyEvent.getCode() == KeyCode.RIGHT){
-                lvl.player.fireRight(gameGroup);
+                lvl.player.fireRight(currentGroup);
             }
         });
 
-        setStage(globalStage,gameScene);
+        setStage();
     }
 
     private void renderGameOver() {
+        currentGroup = new Group();
+        currentScene = new Scene(currentGroup, width, height);
+        currentGroup.getChildren().add(new Rectangle(width,height,Color.BLACK));
 
+        // Show level enemies
+        currentGroup.getChildren().add(lvl.getLevelEnemiesSprites());
+
+        // Game over text
+        Text gameOverText = new Text("Game Over!");
+        gameOverText.setFill(Color.WHITE);
+        gameOverText.setOpacity(0.8);
+        gameOverText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
+        gameOverText.setLayoutX(400);
+        gameOverText.setLayoutY(480);
+        Text gameOverInstrText = new Text("Press Enter to Restart or Q to Quit");
+        gameOverInstrText.setFill(Color.WHITE);
+        gameOverInstrText.setOpacity(0.8);
+        gameOverInstrText.setStyle("-fx-font: 35 arial; -fx-font-weight: bold;");
+        gameOverInstrText.setLayoutX(320);
+        gameOverInstrText.setLayoutY(550);
+
+        currentGroup.getChildren().addAll(gameOverText,gameOverInstrText);
+
+        currentScene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.Q) {
+                gamestate = GameState.QUIT;
+                updateStage();
+            }
+            if (keyEvent.getCode() == KeyCode.ENTER){
+                gamestate = GameState.PLAY_GAME;
+                gameLevel = GameLevel.ONE;
+                updateStage();
+            }
+        });
+
+        setStage();
     }
 
     private StackPane createTextBox(String str, Color fill, Color textFill){

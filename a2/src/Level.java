@@ -1,6 +1,9 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +23,9 @@ public class Level {
 
     public int score;
     public int level;
-    public double spawnDelay;
+    private GameLevel gameLevel;
+    private Text enemiesLeftText;
+    private MiniGame game;
 
     private HashMap<GameLevel, ArrayList<Image>> enemy_map;
 
@@ -46,19 +51,59 @@ public class Level {
         enemy_map.put(GameLevel.THREE,LEVEL_3_ENEMIES);
         level = 1;
         score = 0;
-        player = new Player(level);
-        player.setEnemies(enemies);
     }
 
-    public void newLevel(GameLevel gameLevel, Group parentGroup) {
-        level = gameLevel.ordinal()+1;
+
+    public void updateEnemyCount(Enemy e) {
+       enemies.remove(e);
+       enemiesLeftText.setText(enemies.size() + " Pokemon Left!");
+       if (enemies.size() == 0) {
+          game.setGamestate(GameState.LEVEL_COMPLETE);
+          game.updateStage();
+       }
+    }
+
+    public Group getLevelEnemiesSprites() {
+        Group container = new Group();
+        ArrayList<Image> lvlEnemies = enemy_map.get(gameLevel);
+        int i = 0;
+        for (Image enemyImage : lvlEnemies) {
+            ImageView iv = new ImageView(enemyImage);
+            iv.setTranslateX(i*250 + 300);
+            i+=1;
+            container.getChildren().add(iv);
+        }
+        container.setTranslateX(-75);
+        container.setLayoutY(200);
+        return container;
+    }
+
+    public Group getEnemiesLeft(){
+        Group g = new Group();
+        enemiesLeftText = new Text(enemies.size() + " Pokemon Left!");
+        enemiesLeftText.setFill(Color.BLACK);
+        enemiesLeftText.setOpacity(0.9);
+        enemiesLeftText.setStyle("-fx-font: 30 arial; -fx-font-weight: bold;");
+        enemiesLeftText.setLayoutX(1000);
+        enemiesLeftText.setLayoutY(670);
+        g.getChildren().add(enemiesLeftText);
+        return  g;
+    }
+
+    public void newLevel(MiniGame miniGame,GameLevel gLvl, Group parentGroup) {
+        gameLevel = gLvl;
+        game = miniGame;
+        level = gLvl.ordinal()+1;
+        player = new Player(miniGame, level);
         Random rand = new Random();
         ArrayList<Image> lvlEnemies = enemy_map.get(gameLevel);
+        enemies.clear();
         for (int i = 0; i < level*10; i++) {
             int randIndx = rand.nextInt(lvlEnemies.size());
             Image enemy_img = lvlEnemies.get(randIndx);
-            enemies.add(new Enemy(enemy_img, gameLevel, player, parentGroup));
+            enemies.add(new Enemy(enemy_img, this, player, parentGroup ));
         }
+        player.setEnemies(enemies);
     }
 
 
@@ -69,7 +114,7 @@ public class Level {
             private long lastSpawn = 0 ;
             @Override
             public void handle(long now) {
-                if (i == enemies.size()){
+                if (i == enemies.size() || enemies.size() == 0){
                     this.stop();
                 } else if (now/1000000000 - lastSpawn/1000000000 >= (5-level)) {
                     enemies.get(i).spawn(rand.nextBoolean(), g);

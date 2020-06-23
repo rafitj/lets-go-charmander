@@ -8,18 +8,29 @@ public class Enemy {
     public Sprite sprite;
     private Group parentGroup;
     private Group spriteGroup ;
+    private Level gameLevel;
+    public boolean spawned;
 
-    Enemy(Image pokemon, GameLevel lvl, Player pl, Group pGroup) {
+    Enemy(Image pokemon, Level level, Player pl, Group pGroup) {
         player = pl;
-        speed = lvl.ordinal()+1;
+        speed = level.level;
+        gameLevel = level;
         sprite = new Sprite(pokemon);
         spriteGroup = sprite.getSprite();
         parentGroup = pGroup;
+        spawned = false;
     }
 
+
+
     public void spawn(boolean isLeft,Group g) {
-        int multipler = isLeft ? 1 : -1;
-        sprite.spriteView.setX(-1000*multipler);
+        spawned = true;
+        parentGroup = g;
+        if (isLeft) {
+            sprite.spriteView.setLayoutX(0);
+        } else {
+            sprite.spriteView.setLayoutX(1280);
+        }
         sprite.spriteView.setY(100);
         attackPlayer(isLeft);
         parentGroup.getChildren().add(spriteGroup);
@@ -35,7 +46,7 @@ public class Enemy {
                     shuffleBack(isLeft);
                     this.stop();
                 } else {
-                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()+(10*multipler));
+                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()+(multipler*speed));
                 }
             }
         };
@@ -51,7 +62,7 @@ public class Enemy {
                     attackPlayer(isLeft);
                     this.stop();
                 } else {
-                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(5*multipler));
+                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(0.5*multipler));
                 }
             }
         };
@@ -59,7 +70,13 @@ public class Enemy {
     }
 
     public void defeated(){
-        System.out.println("DEFEATED");
         parentGroup.getChildren().remove(spriteGroup);
+        spriteGroup.getChildren().clear();
+        gameLevel.updateEnemyCount(this);
+    }
+
+    public void end(){
+        parentGroup.getChildren().remove(spriteGroup);
+        spriteGroup.getChildren().clear();
     }
 }
