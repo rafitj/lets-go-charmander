@@ -2,6 +2,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -10,6 +11,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,16 +29,20 @@ public class Player {
     private Group scoregroup = new Group();
     private Text scoretext = new Text("0 EXP");
     private MiniGame game;
-    private ArrayList<String> evolutions =  new ArrayList<>(List.of("Charmander", "Charmeleon", "Charizard"));
+    private ArrayList<String> evolutions =  new ArrayList<>(List.of("Charmander", "Charmeleon", "Charizard", "MegaCharizard"));
     private Image fireImg;
     private MediaPlayer fireSound;
 
     private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",300,300,true,true);
     private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",300,300,true,true);
     private static Image Charizard =  new Image("assets/pokemon/Charizard.gif",500,500,true,true);
+    private static Image MegaCharizard =  new Image("assets/pokemon/MegaCharizard.gif",500,500,true,true);
 
 
     public void loseLife(){
+        AudioClip hitSound = new AudioClip(Paths.get("src/assets/audio/Hit.mp3").toUri().toString());
+        hitSound.play();
+
         if (lives == 0) {
             for (Enemy e : enemies) {
                 e.end();
@@ -150,6 +156,14 @@ public class Player {
                 break;
         }
         sprite = new Sprite(sprtieImg);
+        if (evolutionStage == 3) {
+            sprite.spriteView.setLayoutY(sprite.spriteView.getLayoutY()-170);
+            sprite.spriteView.setLayoutX(sprite.spriteView.getLayoutX()-50);
+        }
+        else if (evolutionStage == 4) {
+            sprite.spriteView.setLayoutY(sprite.spriteView.getLayoutY()-170);
+            sprite.spriteView.setLayoutX(sprite.spriteView.getLayoutX()-50);
+        }
     }
 
     public void setEnemies(ArrayList<Enemy> e) {
@@ -183,6 +197,8 @@ public class Player {
                             continue;
                         }
                         if (fireGroup.intersects(e.sprite.spriteGroup.getBoundsInParent())){
+
+
                             parentGroup.getChildren().remove(fireGroup);
                             fireGroup.getChildren().clear();
                             e.defeated();
@@ -296,9 +312,12 @@ public class Player {
        if (evolutionStage == 1) {
            evolveView = new ImageView(Charmander);
            toggle(evolveView,Charmander, Charmeleon,evolveText);
-       } else {
+       } else if (evolutionStage == 2){
            evolveView = new ImageView(Charmeleon);
            toggle(evolveView,Charmeleon, Charizard,evolveText);
+       } else {
+           evolveView = new ImageView(Charizard);
+           toggle(evolveView,Charizard, MegaCharizard,evolveText);
        }
        evolveView.setLayoutX(500);
        evolveView.setLayoutY(180);
@@ -316,14 +335,16 @@ public class Player {
                     String pokemon = evolutions.get(evolutionStage);
                     MediaPlayer evolvedSound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".mp3").toURI().toString()));
                     evolvedSound.play();
-                    evolveText.setText("Congrats! " + evolutions.get(evolutionStage) + " evolved into " + pokemon + "!");
-                    evolveText.setLayoutX(150);
-                    evolutionStage += 1;
+                    evolveText.setText("Congrats! " + evolutions.get(evolutionStage-1) + " evolved into " + pokemon + "!");
+                    evolveText.setLayoutX(200);
+                    if (evolutionStage != 3) {
+                        evolutionStage += 1;
+                    }
                     fireImg = new Image("assets/fire/fire"+evolutionStage+".gif", 200, 200, true, true);
                     this.stop();
                 } else if (now-lastUpdate > 400000000-(i*25000000)) {
                     lastUpdate = now;
-                    if (i%2==0) {
+                    if (i%3!=0) {
                         iv.setImage(b);
                     } else {
                         iv.setImage(a);

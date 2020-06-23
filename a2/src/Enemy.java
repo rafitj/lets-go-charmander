@@ -16,11 +16,13 @@ public class Enemy {
     public boolean spawned;
     public MediaPlayer defeatedSound = new MediaPlayer(new Media(new File("src/assets/audio/enemyDefeat.mp3").toURI().toString()));
 
-    Enemy(Image pokemon, Level level, Player pl, Group pGroup) {
+    Enemy(Image pokemon, Level level, Player pl, Group pGroup, int xOffset, int yOffset) {
         player = pl;
         speed = level.level;
         gameLevel = level;
         sprite = new Sprite(pokemon);
+        sprite.spriteView.setLayoutX(sprite.spriteView.getLayoutX()+xOffset);
+        sprite.spriteView.setLayoutY(sprite.spriteView.getLayoutY()+yOffset);
         spriteGroup = sprite.getSprite();
         parentGroup = pGroup;
         spawned = false;
@@ -65,7 +67,7 @@ public class Enemy {
             int i = 0;
             @Override
             public void handle(long now) {
-                if (i > 250) {
+                if (i > 350) {
                     attackPlayer(isLeft);
                     this.stop();
                 } else {

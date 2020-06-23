@@ -67,10 +67,65 @@ public class MiniGame extends Application {
             case LEVEL_COMPLETE:
                 renderLevelComplete();
                 break;
+            case GAME_WIN:
+                renderGameWin();
+                break;
             default:
                 renderHome();
         }
     }
+
+    private void renderGameWin() {
+        bgMusic.stop();
+        bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Evolve.mp3").toURI().toString()));
+        bgMusic.play();
+
+        currentGroup = new Group();
+        currentScene = new Scene(currentGroup, width, height);
+        currentGroup.getChildren().add(new Rectangle(width,height,Color.BLACK));
+
+        // Text
+        Text congratsText = new Text("Congratulations! You Won!");
+        congratsText.setFill(Color.WHITE);
+        congratsText.setOpacity(0.8);
+        congratsText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
+        congratsText.setLayoutX(200);
+        congratsText.setLayoutY(130);
+        Text scoreText = new Text("Total Score: "+lvl.player.getScore());
+        scoreText.setFill(Color.WHITE);
+        scoreText.setOpacity(0.8);
+        scoreText.setStyle("-fx-font: 22 arial; -fx-font-weight: bold;");
+        scoreText.setLayoutX(545);
+        scoreText.setLayoutY(160);
+        Text evolveText = new Text("What?");
+        evolveText.setFill(Color.WHITE);
+        evolveText.setOpacity(0.8);
+        evolveText.setStyle("-fx-font: 35 arial; -fx-font-weight: bold;");
+        evolveText.setLayoutX(350);
+        evolveText.setLayoutY(550);
+        Text instText = new Text("Press Enter to Restart or Q to Quit");
+        instText.setFill(Color.WHITE);
+        instText.setOpacity(0.8);
+        instText.setStyle("-fx-font: 25 arial; -fx-font-weight: bold;");
+        instText.setLayoutX(400);
+        instText.setLayoutY(600);
+        currentGroup.getChildren().addAll(congratsText,scoreText, instText,evolveText,  lvl.player.evolve(evolveText));
+
+        currentScene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.Q) {
+                gamestate = GameState.QUIT;
+                updateStage();
+            }
+            if (keyEvent.getCode() == KeyCode.ENTER){
+                gamestate = GameState.PLAY_GAME;
+                gameLevel = GameLevel.ONE;
+                updateStage();
+            }
+        });
+
+        setStage();
+    }
+
 
     private void renderLevelComplete(){
         bgMusic.stop();
@@ -87,7 +142,13 @@ public class MiniGame extends Application {
         congratsText.setOpacity(0.8);
         congratsText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
         congratsText.setLayoutX(310);
-        congratsText.setLayoutY(150);
+        congratsText.setLayoutY(130);
+        Text scoreText = new Text("Total Score: "+lvl.player.getScore());
+        scoreText.setFill(Color.WHITE);
+        scoreText.setOpacity(0.8);
+        scoreText.setStyle("-fx-font: 22 arial; -fx-font-weight: bold;");
+        scoreText.setLayoutX(545);
+        scoreText.setLayoutY(160);
         Text evolveText = new Text("What?");
         evolveText.setFill(Color.WHITE);
         evolveText.setOpacity(0.8);
@@ -100,7 +161,7 @@ public class MiniGame extends Application {
         instText.setStyle("-fx-font: 25 arial; -fx-font-weight: bold;");
         instText.setLayoutX(400);
         instText.setLayoutY(600);
-        currentGroup.getChildren().addAll(congratsText, instText,evolveText,  lvl.player.evolve(evolveText));
+        currentGroup.getChildren().addAll(congratsText,scoreText, instText,evolveText,  lvl.player.evolve(evolveText));
 
         currentScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.Q) {
