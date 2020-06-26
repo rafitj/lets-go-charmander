@@ -1,5 +1,6 @@
+import javafx.animation.AnimationTimer;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -14,6 +15,7 @@ import javafx.scene.shape.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import java.io.File;
 
@@ -27,17 +29,25 @@ enum GameState {
 }
 
 public class MiniGame extends Application {
+    // Scene Constants
     private final static int width = 1280;
     private final static int height = 720;
+    private final static Image bgImage = new Image("assets/GameBackground.png", width,height , true, true);
+
+    // Scene State
     private GameState gamestate = GameState.HOME;
     private GameLevel gameLevel = GameLevel.ONE;
     private Stage globalStage;
-    public static Level lvl = new Level();
-    private static Image bgimage = new Image("assets/GameBackground.png", width,height , true, true);
-    private MediaPlayer bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString()));;
     private Group currentGroup;
     private Scene currentScene;
 
+    // Level Instance
+    public static Level lvl = new Level();
+
+    // Music
+    private MediaPlayer bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString()));;
+
+    // Main Application Method
     @Override
     public void start(Stage stage) {
         globalStage = stage;
@@ -45,6 +55,7 @@ public class MiniGame extends Application {
         updateStage();
     }
 
+    // GameState setter
     public void setGamestate(GameState state) {
         gamestate = state;
     }
@@ -94,7 +105,7 @@ public class MiniGame extends Application {
         Text scoreText = new Text("Total Score: "+lvl.player.getScore());
         scoreText.setFill(Color.WHITE);
         scoreText.setOpacity(0.8);
-        scoreText.setStyle("-fx-font: 22 arial; -fx-font-weight: bold;");
+        scoreText.setStyle("-fx-font: 30 arial; -fx-font-weight: bold;");
         scoreText.setLayoutX(545);
         scoreText.setLayoutY(160);
         Text evolveText = new Text("What?");
@@ -185,7 +196,7 @@ public class MiniGame extends Application {
     }
 
     private void setBackground(){
-        ImageView imageView = new ImageView(bgimage);
+        ImageView imageView = new ImageView(bgImage);
         currentGroup.getChildren().add(imageView);
     }
 
@@ -197,7 +208,7 @@ public class MiniGame extends Application {
     private void renderHome(){
         bgMusic.stop();
         bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString()));
-        bgMusic.play();
+//        bgMusic.play();
 
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
@@ -213,8 +224,9 @@ public class MiniGame extends Application {
 
         // Render sprite
         Player player = new Player(this, gameLevel.ordinal()+1);
-        Group playSprite = player.sprite.getSprite();
-        currentGroup.getChildren().add(playSprite);
+        Group playerSprite = player.sprite.getSprite();
+        playerSprite.setTranslateY(50);
+        currentGroup.getChildren().add(playerSprite);
 
         StackPane enterBox = createTextBox("Press Enter to Start",Color.WHITE, Color.BLACK);
         enterBox.setLayoutX(100);
@@ -272,7 +284,7 @@ public class MiniGame extends Application {
     private void renderGame() {
         bgMusic.stop();
         bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Level"+(gameLevel.ordinal()+1)+"Theme.mp3").toURI().toString()));
-        bgMusic.play();
+//        bgMusic.play();
 
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
@@ -283,6 +295,7 @@ public class MiniGame extends Application {
 
         // Render player
         Group playSprite = lvl.player.sprite.getSprite();
+        playSprite.setTranslateY(50);
         currentGroup.getChildren().add(playSprite);
 
 

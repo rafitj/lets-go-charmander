@@ -2,16 +2,13 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,25 +21,33 @@ public class Player {
     public Sprite sprite;
     private Rectangle healthbar = new Rectangle(600, 20, Color.LIGHTGREEN);
     private Group hpgroup = new Group();
-    private Text hptext = new Text("300 / 300 HP");
+    private Text hptext = new Text("3 / 3 HP");
     private Rectangle scorebar = new Rectangle(0, 10, Color.LIGHTBLUE);
     private Group scoregroup = new Group();
     private Text scoretext = new Text("0 EXP");
     private MiniGame game;
     private ArrayList<String> evolutions =  new ArrayList<>(List.of("Charmander", "Charmeleon", "Charizard", "MegaCharizard"));
     private Image fireImg;
-    private MediaPlayer fireSound;
+    private Media fireSound;
+    private static final Media hitSound = new Media(new File("src/assets/audio/Hit.mp3").toURI().toString());
 
-    private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",300,300,true,true);
-    private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",300,300,true,true);
+    private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",200,200,true,true);
+    private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",250,250,true,true);
     private static Image Charizard =  new Image("assets/pokemon/Charizard.gif",500,500,true,true);
     private static Image MegaCharizard =  new Image("assets/pokemon/MegaCharizard.gif",500,500,true,true);
 
 
     public void loseLife(){
-        AudioClip hitSound = new AudioClip(Paths.get("src/assets/audio/Hit.mp3").toUri().toString());
-        hitSound.play();
-
+        MediaPlayer hitSFX = new MediaPlayer(hitSound);
+        hitSFX.stop();
+        hitSFX.play();
+        lives -= 1;
+        animateHealthBar();
+        if (lives == 1) {
+            healthbar.setFill(Color.RED);
+        } else if (lives == 2) {
+            healthbar.setFill(Color.ORANGE);
+        }
         if (lives == 0) {
             for (Enemy e : enemies) {
                 e.end();
@@ -50,14 +55,6 @@ public class Player {
             resetPlayer();
             game.setGamestate(GameState.GAME_OVER);
             game.updateStage();
-        } else {
-            lives -= 1;
-            animateHealthBar();
-            if (lives == 1) {
-                healthbar.setFill(Color.RED);
-            } else if (lives == 2) {
-                healthbar.setFill(Color.ORANGE);
-            }
         }
     }
 
@@ -70,48 +67,36 @@ public class Player {
         scorebar.setWidth(s);
     }
 
-
-
     public void gainXP() {
-        score += 10;
+        score += 1;
         scoretext.setText(score + " XP");
         AnimationTimer timer = new AnimationTimer() {
-            int i = 1;
             @Override
             public void handle(long now) {
-                if (scorebar.getWidth() > score) {
+                if (scorebar.getWidth() > score*10) {
                     this.stop();
-                } else {
-                    scorebar.setWidth(scorebar.getWidth()+1);
-                    if (i <= 10) {
-                        scoretext.setText((score-10+i) + " XP");
-                        i+=1;
-                    }
                 }
+                scorebar.setWidth(scorebar.getWidth()+1);
             }
         };
         timer.start();
+        scoretext.setText(score + " XP");
     }
 
     public void loseXP() {
-        score -= 5;
+        score -= 1;
         scoretext.setText(score + " XP");
         AnimationTimer timer = new AnimationTimer() {
-            int i = 5;
             @Override
             public void handle(long now) {
-                if (scorebar.getWidth() < score) {
+                if (scorebar.getWidth() < score*10) {
                     this.stop();
-                } else {
-                    scorebar.setWidth(scorebar.getWidth()-1);
-                    if (i > 0) {
-                        scoretext.setText((score+5-i) + " XP");
-                        i-=1;
-                    }
                 }
+                scorebar.setWidth(scorebar.getWidth()-1);
             }
         };
         timer.start();
+        scoretext.setText(score + " XP");
     }
 
     private void animateHealthBar() {
@@ -125,12 +110,12 @@ public class Player {
                 } else {
                     healthbar.setWidth(healthbar.getWidth()-5);
                     if (i <= 100) {
-                        hptext.setText("HP: " + ((lives+1)*100-i)+ " / 300");
                         i+=5;
                     }
                 }
             }
         };
+        hptext.setText(lives+" / 3 HP");
         timer.start();
     }
 
@@ -141,8 +126,8 @@ public class Player {
     Player(MiniGame mg, int stage) {
         game = mg;
         evolutionStage = stage;
-        fireImg = new Image("assets/fire/fire"+evolutionStage+".gif", 200, 200, true, true);
-        fireSound = new MediaPlayer(new Media(new File("src/assets/audio/fire"+evolutionStage+".mp3").toURI().toString()));
+        fireImg = new Image("assets/fire/fire"+evolutionStage+".gif", 100*evolutionStage, 100*evolutionStage, true, true);
+        fireSound = new Media(new File("src/assets/audio/fire1.mp3").toURI().toString());
         Image sprtieImg;
         switch (evolutionStage){
             case 1:
@@ -172,9 +157,10 @@ public class Player {
 
     public void fireLeft(Group parentGroup) {
         sprite.spriteView.setScaleX(1);
-        fireSound.stop();
-        fireSound.play();
-        ImageView fireView = createFireballView(fireImg,90, 500, 280);
+        MediaPlayer fireSFX = new MediaPlayer(fireSound);
+        fireSFX.stop();
+        fireSFX.play();
+        ImageView fireView = createFireballView(fireImg,90, 545, 340);
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
         parentGroup.getChildren().add(fireGroup);
@@ -216,9 +202,10 @@ public class Player {
 
     public void fireRight(Group parentGroup) {
         sprite.spriteView.setScaleX(-1);
-        fireSound.stop();
-        fireSound.play();
-        ImageView fireView = createFireballView(fireImg, -90, 650, 280);
+        MediaPlayer fireSFX = new MediaPlayer(fireSound);
+        fireSFX.stop();
+        fireSFX.play();
+        ImageView fireView = createFireballView(fireImg, -90, 657, 340);
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
 
@@ -265,7 +252,7 @@ public class Player {
     }
 
     public Group getPlayerHPGroup(){
-        hptext.setX(250);
+        hptext.setX(260);
         hptext.setY(45);
         hptext.setFill(Color.BLACK);
         hptext.setOpacity(0.7);

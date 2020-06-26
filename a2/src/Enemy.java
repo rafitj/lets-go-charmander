@@ -14,7 +14,7 @@ public class Enemy {
     private Group spriteGroup ;
     private Level gameLevel;
     public boolean spawned;
-    public MediaPlayer defeatedSound = new MediaPlayer(new Media(new File("src/assets/audio/enemyDefeat.mp3").toURI().toString()));
+    private static final Media defeatedSound = new Media(new File("src/assets/audio/EnemyDefeat.mp3").toURI().toString());
 
     Enemy(Image pokemon, Level level, Player pl, Group pGroup, int xOffset, int yOffset) {
         player = pl;
@@ -29,13 +29,12 @@ public class Enemy {
     }
 
 
-
     public void spawn(boolean isLeft,Group g) {
         spawned = true;
         parentGroup = g;
         if (isLeft) {
             sprite.spriteView.setScaleX(-1);
-            sprite.spriteView.setLayoutX(0);
+            sprite.spriteView.setLayoutX(0-sprite.spriteView.getImage().getWidth());
         } else {
             sprite.spriteView.setLayoutX(1280);
         }
@@ -67,12 +66,12 @@ public class Enemy {
             int i = 0;
             @Override
             public void handle(long now) {
-                if (i > 350) {
+                if (i > 500) {
                     attackPlayer(isLeft);
                     this.stop();
                 } else {
-                    i+=5;
-                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(0.5*multipler));
+                    i+=25;
+                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(7.5*multipler));
                 }
             }
         };
@@ -80,8 +79,9 @@ public class Enemy {
     }
 
     public void defeated(){
-        defeatedSound.stop();
-        defeatedSound.play();
+        MediaPlayer defeatedSFX = new MediaPlayer(defeatedSound);
+        defeatedSFX.stop();
+        defeatedSFX.play();
         parentGroup.getChildren().remove(spriteGroup);
         spriteGroup.getChildren().clear();
         gameLevel.updateEnemyCount(this);

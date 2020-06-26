@@ -36,8 +36,8 @@ public class Level {
     }
 
 
-    private final static ArrayList<Image> LEVEL_1_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Geodude", 300),
-                                                         loadPokemonImg("Grimer", 250),loadPokemonImg("Magnemite", 240)));
+    private final static ArrayList<Image> LEVEL_1_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Geodude", 250),
+                                                         loadPokemonImg("Grimer", 210),loadPokemonImg("Magnemite", 190)));
 
     private final static ArrayList<Image> LEVEL_2_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Steelix", 400),
                                                             loadPokemonImg("Forretress", 240),loadPokemonImg("Skarmory", 400)));
@@ -55,9 +55,9 @@ public class Level {
         sprite_offsets.put(LEVEL_1_ENEMIES.get(0),new Pair<>(0,0));
         sprite_offsets.put(LEVEL_1_ENEMIES.get(1),new Pair<>(0,0));
         sprite_offsets.put(LEVEL_1_ENEMIES.get(2),new Pair<>(0,0));
-        sprite_offsets.put(LEVEL_2_ENEMIES.get(0),new Pair<>(0,-100));
+        sprite_offsets.put(LEVEL_2_ENEMIES.get(0),new Pair<>(0,-200));
         sprite_offsets.put(LEVEL_2_ENEMIES.get(1),new Pair<>(0,0));
-        sprite_offsets.put(LEVEL_2_ENEMIES.get(2),new Pair<>(0,0));
+        sprite_offsets.put(LEVEL_2_ENEMIES.get(2),new Pair<>(0,-100));
         sprite_offsets.put(LEVEL_3_ENEMIES.get(0),new Pair<>(0,0));
         sprite_offsets.put(LEVEL_3_ENEMIES.get(1),new Pair<>(0,0));
         sprite_offsets.put(LEVEL_3_ENEMIES.get(2),new Pair<>(0,0));
