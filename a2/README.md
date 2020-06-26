@@ -4,31 +4,28 @@ CS349 - Assignment 2 by Rafit Jamil (rf2jamil)
 
 ## Description
 
-FindFiles is a CLI File Search Utility that will find files given options and parameters, outputting the absolute file paths of the found files.
+*Pokemon Let's Go Charmander!* is a Beat'em Up Game inspired by the Pokemon game series. Players play the role of Charmander
+ as he ventures through the many regions of the Pokemon world battling other Pokemon to gain XP and grow. Each round you have
+ 3 lives and your goal is to use your fire-attack to defeat all the enemies before they defeat you and set you back. Gain 
+ as much XP as you can and finish all 3 levels to get the end of Charmander's epic adventure!
 
 ## Usage
+**This project requires `javafx`**.
+The following command can be run inside the `src` folder to start the game!
 ```bash
-java FindFiles filetofind [-option argument1 argument2 ...]
+java MiniGame.java
 ```
 
-## Options
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+## Credits 
+This is a fan-made game. 
+All image assets, characters, music, sound effects and content ownership is accredited to and property of The Pokemon Company, Game Freak and Nintendo. 
 
-```
-  -help                     :: print out a help page and exit the program.
-  -reg                      :: find files using [filietofind] argument as a regular expression.
-  -r                        :: execute the command recursively in subfiles.
-  -dir [directory]          :: find the files the specified directory [directory]. Default directory is the calling directory.
-  -ext [ext1,ext2,...]      :: find the files matching [filetofind] and with the given extensions [ext1, ext2,...]
-```
-
-## Notes
-1. Filename (`fileToFind`) cannot begin with `-`
-2. All options must start with `-` 
-3. `-help` will override all other commands
-4. Will report first error if multiple errors in command found
-5. Options parameters must be passed as a comma-separated list
-6. Options will be overridden with the last declared version of the option if declared multiple times
+A list of all specific assets/resources used are provided below:
+- Game Logo: https://www.deviantart.com/asylusgoji91/art/Pokemon-Let-s-Go-Charmander-Logo-773391223
+- All 3D Sprites: https://professorlotus.com/
+- Game Background: https://hypebeast.com/2018/7/pokemon-lets-go-pikachu-eevee-nostalgia
+- Music: https://downloads.khinsider.com/game-soundtracks/album/pokemon-black-and-white-2-super-music-collection and https://downloads.khinsider.com/game-soundtracks/album/pokemon-gameboy-sound-collection
+- Fire SFX: https://www.freesoundeffects.com/free-sounds/fire-10007/
 
 ## Submission Details
  Rafit Jamil\
