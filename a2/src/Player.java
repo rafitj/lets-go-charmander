@@ -1,5 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
@@ -8,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,8 +37,8 @@ public class Player {
     private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",200,200,true,true);
     private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",250,250,true,true);
     private static Image Charizard =  new Image("assets/pokemon/Charizard.gif",500,500,true,true);
-    private static Image MegaCharizard =  new Image("assets/pokemon/MegaCharizard.gif",500,500,true,true);
-
+    private static Image MegaCharizard =  new Image("assets/pokemon/MegaCharizard.gif",600,600,true,true);
+    private ArrayList<Pair<Double,Double>> evolutionOffsets;
 
     public void loseLife(){
         MediaPlayer hitSFX = new MediaPlayer(hitSound);
@@ -66,13 +68,13 @@ public class Player {
     }
 
     public void setScore(int s) {
-        score = s;
-        scorebar.setWidth(s);
+        score = s+1;
+        scoretext.setText(s+1 +" XP");
+        scorebar.setWidth(s+1);
     }
 
     public void gainXP() {
         score += 1;
-        scoretext.setText(score + " XP");
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -127,6 +129,12 @@ public class Player {
     }
 
     Player(MiniGame mg, int stage) {
+        evolutionOffsets = new ArrayList<>();
+        evolutionOffsets.add(new Pair<Double, Double>(0.0,0.0));
+        evolutionOffsets.add(new Pair<Double, Double>(-25.0,-25.0));
+        evolutionOffsets.add(new Pair<Double, Double>(-125.0,-200.0));
+        evolutionOffsets.add(new Pair<Double, Double>(-200.0,-120.0));
+
         game = mg;
         evolutionStage = stage;
         fireImg = new Image("assets/fire/fire"+evolutionStage+".gif", 100*evolutionStage, 100*evolutionStage, true, true);
@@ -144,9 +152,13 @@ public class Player {
                 break;
         }
         sprite = new Sprite(sprtieImg);
-        if (evolutionStage == 3) {
-            sprite.spriteView.setLayoutY(sprite.spriteView.getLayoutY()-170);
-            sprite.spriteView.setLayoutX(sprite.spriteView.getLayoutX()-50);
+        if (evolutionStage == 2) {
+            sprite.spriteView.setLayoutY(sprite.spriteView.getLayoutY()-50);
+            sprite.spriteView.setLayoutX(sprite.spriteView.getLayoutX());
+        }
+        else if (evolutionStage == 3) {
+            sprite.spriteView.setLayoutY(sprite.spriteView.getLayoutY()-250);
+            sprite.spriteView.setLayoutX(sprite.spriteView.getLayoutX());
         }
         else if (evolutionStage == 4) {
             sprite.spriteView.setLayoutY(sprite.spriteView.getLayoutY()-170);
@@ -163,7 +175,7 @@ public class Player {
         MediaPlayer fireSFX = new MediaPlayer(fireSound);
         fireSFX.stop();
         fireSFX.play();
-        ImageView fireView = createFireballView(fireImg,90, 545, 340);
+        ImageView fireView = createFireballView(fireImg,90, (640-15-fireImg.getWidth()), 340);
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
         parentGroup.getChildren().add(fireGroup);
@@ -176,8 +188,8 @@ public class Player {
                     loseXP();
                     this.stop();
                 } else {
-                    if (fireView.getTranslateX() < -400+(evolutionStage*50) ) {
-                        fireView.setOpacity(fireView.getOpacity()-0.1);
+                    if (fireView.getTranslateX() < -360+((evolutionStage-1)*120)) {
+                        fireView.setOpacity(fireView.getOpacity()-(0.1*evolutionStage));
                     }
                     fireView.setTranslateX(fireView.getTranslateX()-10);
                     // Check if fireball hits any enemies
@@ -207,7 +219,7 @@ public class Player {
         MediaPlayer fireSFX = new MediaPlayer(fireSound);
         fireSFX.stop();
         fireSFX.play();
-        ImageView fireView = createFireballView(fireImg, -90, 657, 340);
+        ImageView fireView = createFireballView(fireImg, -90, 655, 340);
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
 
@@ -222,8 +234,8 @@ public class Player {
                     loseXP();
                     this.stop();
                 }
-                if (fireView.getTranslateX() > 400-((evolutionStage-1)*120)) {
-                    fireView.setOpacity(fireView.getOpacity()-0.1);
+                if (fireView.getTranslateX() > 360-((evolutionStage-1)*120)) {
+                    fireView.setOpacity(fireView.getOpacity()-(0.1*evolutionStage));
                 }
                 fireView.setTranslateX(fireView.getTranslateX()+10);
                 // Check if fireball hits any enemies
@@ -291,7 +303,15 @@ public class Player {
         pointText.setStrokeWidth(2);
         pointText.setStrokeType(StrokeType.OUTSIDE);
         pointText.setStyle("-fx-font: 40 arial; -fx-font-weight: bold;");
-        pointText.setLayoutX(x+(isLeft ? 50 : 0));
+        double lx = x;
+        if (x < 50 && isLeft) {
+            lx += 160;
+        } else if(isLeft) {
+            lx -= 40;
+        } else if (x > 1250){
+            lx -= 70;
+        }
+        pointText.setLayoutX(lx);
         pointText.setLayoutY(y+50);
         pointText.setOpacity(0);
         parentGroup.getChildren().addAll(fire, pointText);
@@ -320,7 +340,7 @@ public class Player {
 
         timer.start();
     }
-    private ImageView createFireballView(Image fire, int rotation, int startX, int startY) {
+    private ImageView createFireballView(Image fire, int rotation, double startX, double startY) {
         ImageView fireView = new ImageView(fire);
         fireView.setRotate(rotation);
         fireView.setLayoutX(startX);
@@ -329,7 +349,7 @@ public class Player {
     }
 
     public Group getPlayerHPGroup(){
-        hptext.setX(260);
+        hptext.setX(270);
         hptext.setY(45);
         hptext.setFill(Color.BLACK);
         hptext.setOpacity(0.7);
@@ -383,24 +403,29 @@ public class Player {
            evolveView = new ImageView(Charizard);
            toggle(evolveView,Charizard, MegaCharizard,evolveText);
        }
-       evolveView.setLayoutX(500);
-       evolveView.setLayoutY(180);
+       evolveView.setLayoutX(565);
+       evolveView.setLayoutY(260);
+       evolveView.setTranslateX(evolutionOffsets.get(evolutionStage-1).getKey());
+       evolveView.setTranslateY(evolutionOffsets.get(evolutionStage-1).getValue());
        return evolveView;
     }
 
     private void toggle(ImageView iv, Image a, Image b, Text evolveText) {
+        ColorAdjust whiteout = new ColorAdjust();
+        whiteout.setBrightness(1.0);
         AnimationTimer timer = new AnimationTimer() {
             private int i = 1;
             private long lastUpdate = 0;
             @Override
             public void handle(long now) {
                 if (600000000-(i*10000000) < 1500000) {
+                    iv.setEffect(null);
                     iv.setImage(b);
                     String pokemon = evolutions.get(evolutionStage);
                     MediaPlayer evolvedSound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".mp3").toURI().toString()));
                     evolvedSound.play();
                     evolveText.setText("Congrats! " + evolutions.get(evolutionStage-1) + " evolved into " + pokemon + "!");
-                    evolveText.setLayoutX(200);
+                    evolveText.setLayoutX(220);
                     if (evolutionStage != 3) {
                         evolutionStage += 1;
                     }
@@ -408,10 +433,16 @@ public class Player {
                     this.stop();
                 } else if (now-lastUpdate > 400000000-(i*25000000)) {
                     lastUpdate = now;
-                    if (i%3!=0) {
+                    if (i < 3) {}
+                    else if (i%3!=0) {
+                        iv.setEffect(whiteout);
                         iv.setImage(b);
+                        iv.setTranslateX(evolutionOffsets.get(evolutionStage).getKey());
+                        iv.setTranslateY(evolutionOffsets.get(evolutionStage).getValue());
                     } else {
                         iv.setImage(a);
+                        iv.setTranslateX(evolutionOffsets.get(evolutionStage-1).getKey());
+                        iv.setTranslateY(evolutionOffsets.get(evolutionStage-1).getValue());
                     }
                     i++;
                 }

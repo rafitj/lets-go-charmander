@@ -99,35 +99,38 @@ public class MiniGame extends Application {
         bgImage = gameOverBG;
         setBackground();
         ImageView fxView = new ImageView(gameOverFX);
+        fxView.setLayoutX(210);
         currentGroup.getChildren().add(fxView);
         currentScene = new Scene(currentGroup, width, height);
 
         // Text
-        Text congratsText = new Text("Congratulations! You Won!");
+        Text congratsText = new Text("Congrats! Game Completed!");
         congratsText.setFill(Color.BLACK);
         congratsText.setOpacity(0.8);
         congratsText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
-        congratsText.setLayoutX(200);
+        congratsText.setLayoutX(100);
         congratsText.setLayoutY(130);
-        Text scoreText = new Text("Total Score: "+lvl.player.getScore());
+        Text scoreText = new Text("TOTAL SCORE: "+lvl.player.getScore());
         scoreText.setFill(Color.BLACK);
         scoreText.setOpacity(0.8);
         scoreText.setStyle("-fx-font: 30 arial; -fx-font-weight: bold;");
-        scoreText.setLayoutX(545);
-        scoreText.setLayoutY(160);
+        scoreText.setLayoutX(510);
+        scoreText.setLayoutY(185);
         Text evolveText = new Text("What?");
-        evolveText.setFill(Color.BLACK);
+        evolveText.setFill(Color.WHITE);
         evolveText.setOpacity(0.8);
         evolveText.setStyle("-fx-font: 35 arial; -fx-font-weight: bold;");
         evolveText.setLayoutX(350);
-        evolveText.setLayoutY(550);
+        evolveText.setLayoutY(620);
         Text instText = new Text("Press Enter to Restart or Q to Quit");
-        instText.setFill(Color.BLACK);
+        instText.setFill(Color.WHITE);
         instText.setOpacity(0.8);
         instText.setStyle("-fx-font: 25 arial; -fx-font-weight: bold;");
         instText.setLayoutX(400);
-        instText.setLayoutY(600);
-        currentGroup.getChildren().addAll(congratsText,scoreText, instText,evolveText,  lvl.player.evolve(evolveText));
+        instText.setLayoutY(670);
+        Rectangle bottomRect = new Rectangle(width, 300, Color.BLACK);
+        bottomRect.setLayoutY(550);
+        currentGroup.getChildren().addAll(bottomRect,congratsText,scoreText, instText,evolveText,  lvl.player.evolve(evolveText));
 
         currentScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.Q) {
@@ -161,27 +164,29 @@ public class MiniGame extends Application {
         congratsText.setFill(Color.WHITE);
         congratsText.setOpacity(0.8);
         congratsText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
-        congratsText.setLayoutX(310);
+        congratsText.setLayoutX(300);
         congratsText.setLayoutY(130);
-        Text scoreText = new Text("Total Score: "+lvl.player.getScore());
+        Text scoreText = new Text("TOTAL SCORE: "+lvl.player.getScore());
         scoreText.setFill(Color.WHITE);
         scoreText.setOpacity(0.8);
-        scoreText.setStyle("-fx-font: 22 arial; -fx-font-weight: bold;");
-        scoreText.setLayoutX(545);
-        scoreText.setLayoutY(160);
+        scoreText.setStyle("-fx-font: 30 arial; -fx-font-weight: bold;");
+        scoreText.setLayoutX(510);
+        scoreText.setLayoutY(185);
+        Rectangle bottomRect = new Rectangle(width, 300, Color.BLACK);
+        bottomRect.setLayoutY(550);
         Text evolveText = new Text("What?");
         evolveText.setFill(Color.WHITE);
         evolveText.setOpacity(0.8);
         evolveText.setStyle("-fx-font: 35 arial; -fx-font-weight: bold;");
         evolveText.setLayoutX(350);
-        evolveText.setLayoutY(550);
+        evolveText.setLayoutY(620);
         Text instText = new Text("Press Enter to Continue or Q to Quit");
         instText.setFill(Color.WHITE);
         instText.setOpacity(0.8);
         instText.setStyle("-fx-font: 25 arial; -fx-font-weight: bold;");
         instText.setLayoutX(400);
-        instText.setLayoutY(600);
-        currentGroup.getChildren().addAll(congratsText,scoreText, instText,evolveText,  lvl.player.evolve(evolveText));
+        instText.setLayoutY(670);
+        currentGroup.getChildren().addAll(bottomRect,congratsText,scoreText, instText,evolveText,  lvl.player.evolve(evolveText));
 
         currentScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.Q) {
