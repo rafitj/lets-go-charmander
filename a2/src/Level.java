@@ -156,10 +156,8 @@ public class Level {
             case 2:
                 region = "Jhoto";
                 break;
-            case 3:
-                region = "Hoenn";
             default:
-                region = "Legendary";
+                region = "Hoenn";
         }
         return region + " Region";
     }

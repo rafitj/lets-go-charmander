@@ -6,6 +6,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class Player {
     private Image fireImg;
     private Media fireSound;
     private static final Media hitSound = new Media(new File("src/assets/audio/Hit.mp3").toURI().toString());
-
+    private static Image fireDeath = new Image("assets/fire/burn.gif", 300, 300, true,true);
     private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",200,200,true,true);
     private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",250,250,true,true);
     private static Image Charizard =  new Image("assets/pokemon/Charizard.gif",500,500,true,true);
@@ -57,6 +58,8 @@ public class Player {
             game.updateStage();
         }
     }
+
+
 
     public int getScore(){
         return score;
@@ -164,17 +167,17 @@ public class Player {
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
         parentGroup.getChildren().add(fireGroup);
-
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (fireView.getOpacity() < 0.05) {
+                    animateMissedFire(parentGroup, 545+fireView.getTranslateX(), fireView.getLayoutY());
                     parentGroup.getChildren().remove(fireGroup);
                     loseXP();
                     this.stop();
                 } else {
-                    if (fireView.getTranslateX() < -250+(evolutionStage*50) ) {
-                        fireView.setOpacity(fireView.getOpacity()-0.05);
+                    if (fireView.getTranslateX() < -400+(evolutionStage*50) ) {
+                        fireView.setOpacity(fireView.getOpacity()-0.1);
                     }
                     fireView.setTranslateX(fireView.getTranslateX()-10);
                     // Check if fireball hits any enemies
@@ -183,8 +186,7 @@ public class Player {
                             continue;
                         }
                         if (fireGroup.intersects(e.sprite.spriteGroup.getBoundsInParent())){
-
-
+                            enemyBurn(parentGroup,(0-e.sprite.spriteView.getImage().getWidth())+e.sprite.spriteView.getTranslateX(), e.sprite.spriteView.getLayoutY(), true);
                             parentGroup.getChildren().remove(fireGroup);
                             fireGroup.getChildren().clear();
                             e.defeated();
@@ -216,11 +218,12 @@ public class Player {
             public void handle(long now) {
                 if (fireView.getOpacity() < 0.05) {
                     parentGroup.getChildren().remove(fireGroup);
+                    animateMissedFire(parentGroup, 657+fireView.getTranslateX(), fireView.getLayoutY());
                     loseXP();
                     this.stop();
                 }
-                if (fireView.getTranslateX() > 250-(evolutionStage*50)  ) {
-                    fireView.setOpacity(fireView.getOpacity()-0.05);
+                if (fireView.getTranslateX() > 400-((evolutionStage-1)*120)) {
+                    fireView.setOpacity(fireView.getOpacity()-0.1);
                 }
                 fireView.setTranslateX(fireView.getTranslateX()+10);
                 // Check if fireball hits any enemies
@@ -230,6 +233,7 @@ public class Player {
                         continue;
                     }
                     if (fireGroup.intersects(e.sprite.spriteGroup.getBoundsInParent())){
+                        enemyBurn(parentGroup,1280+e.sprite.spriteView.getTranslateX(), e.sprite.spriteView.getLayoutY(), false);
                         parentGroup.getChildren().remove(fireGroup);
                         fireGroup.getChildren().clear();
                         e.defeated();
@@ -243,6 +247,79 @@ public class Player {
         timer.start();
     }
 
+    private void animateMissedFire(Group parentGroup, double x, double y){
+        Text pointText = new Text("-1XP");
+        pointText.setFill(Color.GREY);
+        pointText.setStroke(Color.BLACK);
+        pointText.setStrokeWidth(2);
+        pointText.setStrokeType(StrokeType.OUTSIDE);
+        pointText.setStyle("-fx-font: 40 arial; -fx-font-weight: bold;");
+        pointText.setLayoutX(x);
+        pointText.setLayoutY(y);
+        pointText.setOpacity(0);
+        parentGroup.getChildren().addAll(pointText);
+        AnimationTimer timer = new AnimationTimer() {
+            int i = 80;
+            @Override
+            public void handle(long l) {
+                if (i < 1){
+                    parentGroup.getChildren().remove(pointText);
+                    this.stop();
+                } else {
+                    if (i > 60) {
+                        pointText.setOpacity(pointText.getOpacity()+0.10);
+                    } else {
+                        pointText.setOpacity(pointText.getOpacity()-0.10);
+                    }
+                    pointText.setTranslateY(pointText.getTranslateY()-1);
+                    i -= 1;
+                }
+            }
+        };
+
+        timer.start();
+    }
+
+    private void enemyBurn(Group parentGroup, double x, double y, boolean isLeft) {
+        ImageView fire = new ImageView(fireDeath);
+        fire.setOpacity(0);
+        fire.setLayoutX(x);
+        fire.setLayoutY(y);
+        Text pointText = new Text("+1XP");
+        pointText.setFill(Color.LIGHTBLUE);
+        pointText.setStroke(Color.BLACK);
+        pointText.setStrokeWidth(2);
+        pointText.setStrokeType(StrokeType.OUTSIDE);
+        pointText.setStyle("-fx-font: 40 arial; -fx-font-weight: bold;");
+        pointText.setLayoutX(x+(isLeft ? 50 : 0));
+        pointText.setLayoutY(y+50);
+        pointText.setOpacity(0);
+        parentGroup.getChildren().addAll(fire, pointText);
+        AnimationTimer timer = new AnimationTimer() {
+            int i = 60;
+            @Override
+            public void handle(long l) {
+                if (i < 1){
+                    fire.setOpacity(0);
+                    parentGroup.getChildren().remove(pointText);
+                    parentGroup.getChildren().remove(fire);
+                    this.stop();
+                } else {
+                    if (i > 50) {
+                        fire.setOpacity(fire.getOpacity()+0.20);
+                        pointText.setOpacity(pointText.getOpacity()+0.20);
+                    } else {
+                        fire.setOpacity(fire.getOpacity()-0.10);
+                        pointText.setOpacity(pointText.getOpacity()-0.10);
+                    }
+                    pointText.setTranslateY(pointText.getTranslateY()-1);
+                    i -= 1;
+                }
+            }
+        };
+
+        timer.start();
+    }
     private ImageView createFireballView(Image fire, int rotation, int startX, int startY) {
         ImageView fireView = new ImageView(fire);
         fireView.setRotate(rotation);

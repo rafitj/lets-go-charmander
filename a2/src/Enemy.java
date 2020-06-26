@@ -3,8 +3,12 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Text;
 
 import java.io.File;
+import java.util.Random;
 
 public class Enemy {
     public int speed = 1;
@@ -50,6 +54,7 @@ public class Enemy {
             public void handle(long now) {
                 if (sprite.spriteGroup.intersects(player.sprite.spriteGroup.getBoundsInParent())) {
                     player.loseLife();
+                    animatePlayerDamage();
                     shuffleBack(isLeft);
                     this.stop();
                 } else {
@@ -60,8 +65,45 @@ public class Enemy {
         timer.start();
     }
 
+    private void animatePlayerDamage(){
+        Text pointText = new Text("-1HP");
+        pointText.setFill(Color.RED);
+        pointText.setStroke(Color.BLACK);
+        pointText.setStrokeWidth(2);
+        pointText.setStrokeType(StrokeType.OUTSIDE);
+        pointText.setStyle("-fx-font: 40 arial; -fx-font-weight: bold;");
+        pointText.setLayoutX(player.sprite.spriteView.getLayoutX());
+        pointText.setLayoutY(player.sprite.spriteView.getLayoutY()+50);
+        pointText.setOpacity(0);
+        parentGroup.getChildren().addAll(pointText);
+        AnimationTimer timer = new AnimationTimer() {
+            int i = 50;
+            @Override
+            public void handle(long l) {
+                if (i < 1){
+                    parentGroup.getChildren().remove(pointText);
+                    player.sprite.spriteView.setOpacity(1);
+                    this.stop();
+                } else {
+                    if (i > 40) {
+                        player.sprite.spriteView.setOpacity((i%2)*100);
+                        pointText.setOpacity(pointText.getOpacity()-0.10);
+                    } else {
+                        player.sprite.spriteView.setOpacity(1);
+                        pointText.setOpacity(pointText.getOpacity()-0.10);
+                    }
+                    pointText.setTranslateY(pointText.getTranslateY()-1);
+                    i -= 1;
+                }
+            }
+        };
+
+        timer.start();
+
+    }
     private void shuffleBack(boolean isLeft) {
         int multipler = isLeft ? 1 : -1;
+        Random rand = new Random();
         AnimationTimer timer = new AnimationTimer() {
             int i = 0;
             @Override
@@ -69,10 +111,14 @@ public class Enemy {
                 if (i > 500) {
                     attackPlayer(isLeft);
                     this.stop();
+                } else if (i > 350) {
+                    sprite.spriteView.setRotate(0);
+                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(3*multipler));
                 } else {
-                    i+=25;
-                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(7.5*multipler));
+                    sprite.spriteView.setRotate(rand.nextDouble()*20-10);
+                    sprite.spriteView.setTranslateX(sprite.spriteView.getTranslateX()-(15*multipler));
                 }
+                i+=25;
             }
         };
         timer.start();
@@ -82,9 +128,27 @@ public class Enemy {
         MediaPlayer defeatedSFX = new MediaPlayer(defeatedSound);
         defeatedSFX.stop();
         defeatedSFX.play();
-        parentGroup.getChildren().remove(spriteGroup);
-        spriteGroup.getChildren().clear();
+        AnimationTimer timer = new AnimationTimer() {
+            int i = 3;
+            @Override
+            public void handle(long l) {
+                if (i==0){
+                    parentGroup.getChildren().remove(spriteGroup);
+                    spriteGroup.getChildren().clear();
+                    this.stop();
+                } else {
+                    if (i%2==1) {
+                        sprite.spriteView.setOpacity(0);
+                    } else {
+                        sprite.spriteView.setOpacity(i);
+                    }
+                    i -= 1;
+                }
+            }
+        };
+        timer.start();
         gameLevel.updateEnemyCount(this);
+
     }
 
     public void end(){

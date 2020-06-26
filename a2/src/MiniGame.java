@@ -32,7 +32,9 @@ public class MiniGame extends Application {
     // Scene Constants
     private final static int width = 1280;
     private final static int height = 720;
-    private final static Image bgImage = new Image("assets/GameBackground.png", width,height , true, true);
+    private final static Image gameOverBG = new Image("assets/WinBackground.jpg", width, height, true, true);
+    private final static Image gameOverFX = new Image("assets/WinConfetti.gif", width, height, true, true);
+    private final static Image evolutionBG = new Image("assets/EvolutionBackground.gif", width, height, true, true);
 
     // Scene State
     private GameState gamestate = GameState.HOME;
@@ -40,6 +42,7 @@ public class MiniGame extends Application {
     private Stage globalStage;
     private Group currentGroup;
     private Scene currentScene;
+    private static Image bgImage = new Image("assets/GameBackground.png", width,height , true, true);
 
     // Level Instance
     public static Level lvl = new Level();
@@ -91,31 +94,35 @@ public class MiniGame extends Application {
         bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Evolve.mp3").toURI().toString()));
         bgMusic.play();
 
+        // Set BG
         currentGroup = new Group();
+        bgImage = gameOverBG;
+        setBackground();
+        ImageView fxView = new ImageView(gameOverFX);
+        currentGroup.getChildren().add(fxView);
         currentScene = new Scene(currentGroup, width, height);
-        currentGroup.getChildren().add(new Rectangle(width,height,Color.BLACK));
 
         // Text
         Text congratsText = new Text("Congratulations! You Won!");
-        congratsText.setFill(Color.WHITE);
+        congratsText.setFill(Color.BLACK);
         congratsText.setOpacity(0.8);
         congratsText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
         congratsText.setLayoutX(200);
         congratsText.setLayoutY(130);
         Text scoreText = new Text("Total Score: "+lvl.player.getScore());
-        scoreText.setFill(Color.WHITE);
+        scoreText.setFill(Color.BLACK);
         scoreText.setOpacity(0.8);
         scoreText.setStyle("-fx-font: 30 arial; -fx-font-weight: bold;");
         scoreText.setLayoutX(545);
         scoreText.setLayoutY(160);
         Text evolveText = new Text("What?");
-        evolveText.setFill(Color.WHITE);
+        evolveText.setFill(Color.BLACK);
         evolveText.setOpacity(0.8);
         evolveText.setStyle("-fx-font: 35 arial; -fx-font-weight: bold;");
         evolveText.setLayoutX(350);
         evolveText.setLayoutY(550);
         Text instText = new Text("Press Enter to Restart or Q to Quit");
-        instText.setFill(Color.WHITE);
+        instText.setFill(Color.BLACK);
         instText.setOpacity(0.8);
         instText.setStyle("-fx-font: 25 arial; -fx-font-weight: bold;");
         instText.setLayoutX(400);
@@ -143,9 +150,11 @@ public class MiniGame extends Application {
         bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Evolve.mp3").toURI().toString()));
         bgMusic.play();
 
+        // Set BG
         currentGroup = new Group();
+        bgImage = evolutionBG;
+        setBackground();
         currentScene = new Scene(currentGroup, width, height);
-        currentGroup.getChildren().add(new Rectangle(width,height,Color.BLACK));
 
         // Text
         Text congratsText = new Text("Level " + (gameLevel.ordinal()+1) + " Complete!");
@@ -288,7 +297,9 @@ public class MiniGame extends Application {
 
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
+        bgImage = new Image("assets/GameBackground.png", width,height , true, true);
         setBackground();
+
         int lvlScore = lvl.player != null ? lvl.player.getScore() : 0;
         lvl.newLevel(this, gameLevel, currentGroup);
         lvl.player.setScore(lvlScore);

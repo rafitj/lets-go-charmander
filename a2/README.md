@@ -26,6 +26,10 @@ A list of all specific assets/resources used are provided below:
 - Game Background: https://hypebeast.com/2018/7/pokemon-lets-go-pikachu-eevee-nostalgia
 - Music: https://downloads.khinsider.com/game-soundtracks/album/pokemon-black-and-white-2-super-music-collection and https://downloads.khinsider.com/game-soundtracks/album/pokemon-gameboy-sound-collection
 - Fire SFX: https://www.freesoundeffects.com/free-sounds/fire-10007/
+- Game Win Background: https://images8.alphacoders.com/849/849531.jpg
+- Game Win Confetti: https://i.pinimg.com/originals/b5/e3/90/b5e3903051d2157407a446ecdc0c37b6.gif
+- Fire VFX: https://giphy.com/stickers/asparstudio-motion-fire-flame-flare-UPuWR8O5eFOC2FdKp4, https://giphy.com/stickers/orlandomagic-fire-magic-orlando-ZCfDkkDYlUDcoF4qev, https://giphy.com/stickers/fire-26DNj3iQi58mrvTDW
+- Evolution Background: https://i.stack.imgur.com/EZ1Mp.gif
 
 ## Submission Details
  Rafit Jamil\
