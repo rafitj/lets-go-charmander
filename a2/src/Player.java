@@ -31,8 +31,8 @@ public class Player {
     private MiniGame game;
     private ArrayList<String> evolutions =  new ArrayList<>(List.of("Charmander", "Charmeleon", "Charizard", "MegaCharizard"));
     private Image fireImg;
-    private Media fireSound;
-    private static final Media hitSound = new Media(new File("src/assets/audio/Hit.mp3").toURI().toString());
+    private static final Media fireSound = new Media(new File("src/assets/audio/Fire.wav").toURI().toString());
+    private static final Media hitSound = new Media(new File("src/assets/audio/Hit.wav").toURI().toString());
     private static Image fireDeath = new Image("assets/fire/burn.gif", 300, 300, true,true);
     private static Image Charmander =  new Image("assets/pokemon/Charmander.gif",200,200,true,true);
     private static Image Charmeleon =  new Image("assets/pokemon/Charmeleon.gif",250,250,true,true);
@@ -68,9 +68,15 @@ public class Player {
     }
 
     public void setScore(int s) {
-        score = s+1;
-        scoretext.setText(s+1 +" XP");
-        scorebar.setWidth(s+1);
+        if (score < 0) {
+            score = s+1;
+        } else if (score > 0) {
+            score = s-1;
+        } else {
+            score = s;
+        }
+        scoretext.setText(score +" XP");
+        scorebar.setWidth(score);
     }
 
     public void gainXP() {
@@ -138,7 +144,6 @@ public class Player {
         game = mg;
         evolutionStage = stage;
         fireImg = new Image("assets/fire/fire"+evolutionStage+".gif", 100*evolutionStage, 100*evolutionStage, true, true);
-        fireSound = new Media(new File("src/assets/audio/fire1.mp3").toURI().toString());
         Image sprtieImg;
         switch (evolutionStage){
             case 1:
@@ -175,7 +180,7 @@ public class Player {
         MediaPlayer fireSFX = new MediaPlayer(fireSound);
         fireSFX.stop();
         fireSFX.play();
-        ImageView fireView = createFireballView(fireImg,90, (640-15-fireImg.getWidth()), 340);
+        ImageView fireView = createFireballView(fireImg,90, (640-15-fireImg.getWidth()), 405-(evolutionStage*72));
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
         parentGroup.getChildren().add(fireGroup);
@@ -201,8 +206,8 @@ public class Player {
                             enemyBurn(parentGroup,(0-e.sprite.spriteView.getImage().getWidth())+e.sprite.spriteView.getTranslateX(), e.sprite.spriteView.getLayoutY(), true);
                             parentGroup.getChildren().remove(fireGroup);
                             fireGroup.getChildren().clear();
-                            e.defeated();
                             gainXP();
+                            e.defeated();
                             this.stop();
                             break;
                         }
@@ -219,7 +224,7 @@ public class Player {
         MediaPlayer fireSFX = new MediaPlayer(fireSound);
         fireSFX.stop();
         fireSFX.play();
-        ImageView fireView = createFireballView(fireImg, -90, 655, 340);
+        ImageView fireView = createFireballView(fireImg, -90, 655, 405-(evolutionStage*72));
         Group fireGroup = new Group();
         fireGroup.getChildren().add(fireView);
 
@@ -248,8 +253,8 @@ public class Player {
                         enemyBurn(parentGroup,1280+e.sprite.spriteView.getTranslateX(), e.sprite.spriteView.getLayoutY(), false);
                         parentGroup.getChildren().remove(fireGroup);
                         fireGroup.getChildren().clear();
-                        e.defeated();
                         gainXP();
+                        e.defeated();
                         this.stop();
                         break;
                     }
@@ -369,7 +374,7 @@ public class Player {
         return hpgroup;
     }
     public Group getScoregroup(){
-        scoretext.setX(275);
+        scoretext.setX(285);
         scoretext.setY(35);
         scoretext.setFill(Color.BLACK);
         scoretext.setOpacity(0.7);
@@ -389,7 +394,7 @@ public class Player {
 
     public  ImageView evolve(Text evolveText){
         String pokemon = evolutions.get(evolutionStage-1);
-        MediaPlayer sound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".mp3").toURI().toString()));
+        MediaPlayer sound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".wav").toURI().toString()));
         sound.play();
         evolveText.setText("What? " + evolutions.get(evolutionStage-1) + " is evolving!");
         ImageView evolveView;
@@ -422,7 +427,7 @@ public class Player {
                     iv.setEffect(null);
                     iv.setImage(b);
                     String pokemon = evolutions.get(evolutionStage);
-                    MediaPlayer evolvedSound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".mp3").toURI().toString()));
+                    MediaPlayer evolvedSound = new MediaPlayer(new Media(new File("src/assets/audio/"+pokemon+".wav").toURI().toString()));
                     evolvedSound.play();
                     evolveText.setText("Congrats! " + evolutions.get(evolutionStage-1) + " evolved into " + pokemon + "!");
                     evolveText.setLayoutX(220);
@@ -435,11 +440,11 @@ public class Player {
                     lastUpdate = now;
                     if (i < 3) {}
                     else if (i%3!=0) {
-                        iv.setEffect(whiteout);
                         iv.setImage(b);
                         iv.setTranslateX(evolutionOffsets.get(evolutionStage).getKey());
                         iv.setTranslateY(evolutionOffsets.get(evolutionStage).getValue());
                     } else {
+                        iv.setEffect(whiteout);
                         iv.setImage(a);
                         iv.setTranslateX(evolutionOffsets.get(evolutionStage-1).getKey());
                         iv.setTranslateY(evolutionOffsets.get(evolutionStage-1).getValue());

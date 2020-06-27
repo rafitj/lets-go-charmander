@@ -39,11 +39,11 @@ public class Level {
     private final static ArrayList<Image> LEVEL_1_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Geodude", 250),
                                                          loadPokemonImg("Grimer", 210),loadPokemonImg("Magnemite", 190)));
 
-    private final static ArrayList<Image> LEVEL_2_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Crobat", 375),
-                                                            loadPokemonImg("Forretress", 240),loadPokemonImg("Skarmory", 375)));
+    private final static ArrayList<Image> LEVEL_2_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Crobat", 425),
+                                                            loadPokemonImg("Forretress", 235),loadPokemonImg("Skarmory", 375)));
 
-    private final static ArrayList<Image> LEVEL_3_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Gardevoir", 300),
-                                                        loadPokemonImg("Salamence", 300),loadPokemonImg("Ludicolo", 300)));
+    private final static ArrayList<Image> LEVEL_3_ENEMIES = new ArrayList<Image>(List.of(loadPokemonImg("Gardevoir", 325),
+                                                        loadPokemonImg("Salamence", 400),loadPokemonImg("Ludicolo", 400)));
 
     Level(){
         enemies = new ArrayList<>();
@@ -55,12 +55,12 @@ public class Level {
         sprite_offsets.put(LEVEL_1_ENEMIES.get(0),new Pair<>(0,0));
         sprite_offsets.put(LEVEL_1_ENEMIES.get(1),new Pair<>(0,0));
         sprite_offsets.put(LEVEL_1_ENEMIES.get(2),new Pair<>(0,0));
-        sprite_offsets.put(LEVEL_2_ENEMIES.get(0),new Pair<>(0,-25));
-        sprite_offsets.put(LEVEL_2_ENEMIES.get(1),new Pair<>(0,0));
-        sprite_offsets.put(LEVEL_2_ENEMIES.get(2),new Pair<>(0,-75));
-        sprite_offsets.put(LEVEL_3_ENEMIES.get(0),new Pair<>(0,-50));
-        sprite_offsets.put(LEVEL_3_ENEMIES.get(1),new Pair<>(0,-50));
-        sprite_offsets.put(LEVEL_3_ENEMIES.get(2),new Pair<>(0,-50));
+        sprite_offsets.put(LEVEL_2_ENEMIES.get(0),new Pair<>(0,-110));
+        sprite_offsets.put(LEVEL_2_ENEMIES.get(1),new Pair<>(0,-25));
+        sprite_offsets.put(LEVEL_2_ENEMIES.get(2),new Pair<>(0,-95));
+        sprite_offsets.put(LEVEL_3_ENEMIES.get(0),new Pair<>(0,-120));
+        sprite_offsets.put(LEVEL_3_ENEMIES.get(1),new Pair<>(0,-140));
+        sprite_offsets.put(LEVEL_3_ENEMIES.get(2),new Pair<>(0,-135));
         level = 1;
         score = 0;
     }
@@ -86,12 +86,12 @@ public class Level {
         int i = 0;
         for (Image enemyImage : lvlEnemies) {
             ImageView iv = new ImageView(enemyImage);
-            iv.setTranslateX(i*250 + 300);
+            iv.setTranslateX(i*225 + 450);
             i+=1;
             container.getChildren().add(iv);
         }
-        container.setTranslateX(-75);
-        container.setLayoutY(200);
+        container.setLayoutX(-225);
+        container.setLayoutY(170 - (50*(gameLevel.ordinal()-1)));
         return container;
     }
 
@@ -136,7 +136,7 @@ public class Level {
             public void handle(long now) {
                 if (i == numEnemies){
                     this.stop();
-                } else if (now/1000000000 - lastSpawn/1000000000 >= 0.1+(6-(level*2))) {
+                } else if (now/1000000000 - lastSpawn/1000000000 >= (rand.nextDouble()*0.5)+(6-(level*2))) {
                     enemiesToSpawn.get(i).spawn(rand.nextBoolean(), g);
                     i+=1;
                     lastSpawn = now;

@@ -18,7 +18,7 @@ public class Enemy {
     private Group spriteGroup ;
     private Level gameLevel;
     public boolean spawned;
-    private static final Media defeatedSound = new Media(new File("src/assets/audio/EnemyDefeat.mp3").toURI().toString());
+    private static final Media defeatedSound = new Media(new File("src/assets/audio/EnemyDefeat.wav").toURI().toString());
 
     Enemy(Image pokemon, Level level, Player pl, Group pGroup, int xOffset, int yOffset) {
         player = pl;

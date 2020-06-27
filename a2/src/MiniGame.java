@@ -91,7 +91,9 @@ public class MiniGame extends Application {
 
     private void renderGameWin() {
         bgMusic.stop();
-        bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Evolve.mp3").toURI().toString()));
+        bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/VictoryTheme.mp3").toURI().toString()));
+        bgMusic.setVolume(0.25);
+        bgMusic.setCycleCount(MediaPlayer.INDEFINITE);
         bgMusic.play();
 
         // Set BG
@@ -108,7 +110,7 @@ public class MiniGame extends Application {
         congratsText.setFill(Color.BLACK);
         congratsText.setOpacity(0.8);
         congratsText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
-        congratsText.setLayoutX(100);
+        congratsText.setLayoutX(150);
         congratsText.setLayoutY(130);
         Text scoreText = new Text("TOTAL SCORE: "+lvl.player.getScore());
         scoreText.setFill(Color.BLACK);
@@ -138,6 +140,7 @@ public class MiniGame extends Application {
                 updateStage();
             }
             if (keyEvent.getCode() == KeyCode.ENTER){
+                lvl.player.setScore(0);
                 gamestate = GameState.PLAY_GAME;
                 gameLevel = GameLevel.ONE;
                 updateStage();
@@ -222,7 +225,9 @@ public class MiniGame extends Application {
     private void renderHome(){
         bgMusic.stop();
         bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/PokemonThemeSong.mp3").toURI().toString()));
-//        bgMusic.play();
+        bgMusic.setVolume(0.25);
+        bgMusic.setCycleCount(MediaPlayer.INDEFINITE);
+        bgMusic.play();
 
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
@@ -242,18 +247,18 @@ public class MiniGame extends Application {
         playerSprite.setTranslateY(50);
         currentGroup.getChildren().add(playerSprite);
 
-        StackPane enterBox = createTextBox("Press Enter to Start",Color.WHITE, Color.BLACK);
+        StackPane enterBox = createTextBox("Press Enter to Start",Color.WHITE, Color.BLACK, 300);
         enterBox.setLayoutX(100);
-        enterBox.setLayoutY(500);
+        enterBox.setLayoutY(585);
         currentGroup.getChildren().add(enterBox);
 
-        StackPane quitBox = createTextBox("Press Q to Quit", Color.WHITE, Color.BLACK);
+        StackPane quitBox = createTextBox("Press Q to Quit", Color.WHITE, Color.BLACK, 300);
         quitBox.setLayoutX(900);
         quitBox.setLayoutY(585);
         currentGroup.getChildren().add(quitBox);
 
-        StackPane controls = createTextBox("Press ← OR → to Fire", Color.rgb(170,127,82), Color.WHITE);
-        controls.setLayoutX(100);
+        StackPane controls = createTextBox("CONTROLS: Press ← OR → to Fire", Color.rgb(170,127,82), Color.WHITE, 450);
+        controls.setLayoutX(425);
         controls.setLayoutY(585);
         currentGroup.getChildren().add(controls);
 
@@ -267,7 +272,7 @@ public class MiniGame extends Application {
                 gamestate = GameState.PLAY_GAME;
                 updateStage();
             }
-            if (keyEvent.getCode() == KeyCode.DIGIT0) {
+            if (keyEvent.getCode() == KeyCode.DIGIT1) {
                 gameLevel = GameLevel.ONE;
                 gamestate = GameState.PLAY_GAME;
                 updateStage();
@@ -285,8 +290,8 @@ public class MiniGame extends Application {
         });
 
         Label credits = new Label("Created by Rafit Jamil 2078514");
-        credits.setTextFill(Color.WHITE);
-        credits.setOpacity(0.5);
+        credits.setTextFill(Color.BLACK);
+        credits.setOpacity(0.8);
         credits.setStyle("-fx-font: 16 arial; -fx-font-weight: bold;");
         credits.setLayoutX(1000);
         credits.setLayoutY(25);
@@ -298,7 +303,9 @@ public class MiniGame extends Application {
     private void renderGame() {
         bgMusic.stop();
         bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/Level"+(gameLevel.ordinal()+1)+"Theme.mp3").toURI().toString()));
-//        bgMusic.play();
+        bgMusic.setVolume(0.06);
+        bgMusic.setCycleCount(MediaPlayer.INDEFINITE);
+        bgMusic.play();
 
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
@@ -355,8 +362,9 @@ public class MiniGame extends Application {
     private void renderGameOver() {
         bgMusic.stop();
         bgMusic = new MediaPlayer(new Media(new File("src/assets/audio/GameOverTheme.mp3").toURI().toString()));
-        bgMusic.play();
+        bgMusic.setVolume(0.2);
         bgMusic.setCycleCount(MediaPlayer.INDEFINITE);
+        bgMusic.play();
 
         currentGroup = new Group();
         currentScene = new Scene(currentGroup, width, height);
@@ -372,13 +380,13 @@ public class MiniGame extends Application {
         gameOverText.setOpacity(0.8);
         gameOverText.setStyle("-fx-font: 75 arial; -fx-font-weight: bold;");
         gameOverText.setLayoutX(400);
-        gameOverText.setLayoutY(480);
+        gameOverText.setLayoutY(470);
         Text gameOverInstrText = new Text("Press Enter to Restart or Q to Quit");
         gameOverInstrText.setFill(Color.WHITE);
         gameOverInstrText.setOpacity(0.8);
         gameOverInstrText.setStyle("-fx-font: 35 arial; -fx-font-weight: bold;");
         gameOverInstrText.setLayoutX(320);
-        gameOverInstrText.setLayoutY(550);
+        gameOverInstrText.setLayoutY(540);
 
         currentGroup.getChildren().addAll(gameOverText,gameOverInstrText);
 
@@ -397,9 +405,9 @@ public class MiniGame extends Application {
         setStage();
     }
 
-    private StackPane createTextBox(String str, Color fill, Color textFill){
+    private StackPane createTextBox(String str, Color fill, Color textFill, int rectW){
         StackPane textbox = new StackPane();
-        Rectangle rectangle = new Rectangle(300,70 ,fill);
+        Rectangle rectangle = new Rectangle(rectW,70 ,fill);
         rectangle.setStroke(Color.rgb(170,127,82));
         rectangle.setStrokeWidth(3);
         rectangle.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 30, 0, 0, 0); ");
