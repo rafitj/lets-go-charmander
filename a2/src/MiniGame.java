@@ -396,6 +396,7 @@ public class MiniGame extends Application {
                 updateStage();
             }
             if (keyEvent.getCode() == KeyCode.ENTER){
+                lvl.player.setScore(0);
                 gamestate = GameState.PLAY_GAME;
                 gameLevel = GameLevel.ONE;
                 updateStage();
