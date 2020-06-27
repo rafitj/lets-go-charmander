@@ -68,12 +68,12 @@ public class Player {
     }
 
     public void setScore(int s) {
-        if (score < 0) {
+        if (s == 0 || score == 0){
+            score = s;
+        } else if (score < 0) {
             score = s+1;
         } else if (score > 0) {
             score = s-1;
-        } else {
-            score = s;
         }
         scoretext.setText(score +" XP");
         scorebar.setWidth(score);
@@ -374,7 +374,7 @@ public class Player {
         return hpgroup;
     }
     public Group getScoregroup(){
-        scoretext.setX(285);
+        scoretext.setX(275);
         scoretext.setY(35);
         scoretext.setFill(Color.BLACK);
         scoretext.setOpacity(0.7);
