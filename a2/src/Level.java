@@ -90,7 +90,7 @@ public class Level {
             i+=1;
             container.getChildren().add(iv);
         }
-        container.setLayoutX(-225);
+        container.setLayoutX(-175);
         container.setLayoutY(170 - (50*(gameLevel.ordinal()-1)));
         return container;
     }
