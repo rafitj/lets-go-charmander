@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 // This is the controller class that handles input for our FXML form
 // We specify this class in the FXML file when we create it.
 
-public class BasicFXMLController {
+public class Controller {
 
     @FXML
     private Label label;

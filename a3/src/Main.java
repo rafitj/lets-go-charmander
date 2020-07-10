@@ -4,11 +4,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class FXMLApplication extends Application {
+public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Basic.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("Layout.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setHeight(800);

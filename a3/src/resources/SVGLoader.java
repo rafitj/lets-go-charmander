@@ -1,4 +1,4 @@
-package sample;
+package resources;
 
 import javafx.event.EventHandler;
 import javafx.scene.Group;
