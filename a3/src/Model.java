@@ -1,3 +1,4 @@
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 // This is the controller class that handles input for our FXML form
@@ -8,7 +9,7 @@ enum AvatarPart {
     EYES,
     SKIN,
     MOUTH,
-    EYEBROOWS,
+    EYEBROWS,
     JACKET,
     TSHIRT,
     TSHIRTNECK,
@@ -17,6 +18,7 @@ enum AvatarPart {
 }
 
 public class Model {
+//  Data Members
     private String hair;
     private String eyes;
     private String skin;
@@ -34,7 +36,19 @@ public class Model {
     private int eyeSize;
     private int eyebrowPosition;
 
-    private AvatarPart selected;
+    private ImageView selected;
+
+    public Model(){
+        hair="hair_curly.png";
+        eyes="eyes_default.png";
+        mouth="mouth_default.png";
+        eyebrows="brows_default.png";
+        skin="skin_light.png";
+//      TODO: Initialize colors
+
+        eyeSize=1;
+        eyebrowPosition=0;
+    }
 
     public String getEyes() {
         return eyes;
@@ -140,11 +154,11 @@ public class Model {
         this.eyebrowPosition = eyebrowPosition;
     }
 
-    public AvatarPart getSelected() {
+    public ImageView getSelected() {
         return selected;
     }
 
-    public void setSelected(AvatarPart selected) {
+    public void setSelected(ImageView selected) {
         this.selected = selected;
     }
 }
