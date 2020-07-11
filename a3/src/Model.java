@@ -1,3 +1,4 @@
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
@@ -18,7 +19,10 @@ enum AvatarPart {
 }
 
 public class Model {
-//  Data Members
+
+    //  Data Members
+    private Color backgroundColor;
+
     private String hair;
     private String eyes;
     private String skin;
@@ -48,6 +52,16 @@ public class Model {
 
         eyeSize=1;
         eyebrowPosition=0;
+
+        backgroundColor = Color.TRANSPARENT;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     public String getEyes() {

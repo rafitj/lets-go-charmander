@@ -2,9 +2,9 @@
 
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
@@ -13,13 +13,14 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
   <children>
-    <SplitPane dividerPositions="0.27839643652561247, 0.7060133630289532" focusTraversable="true" prefHeight="604.0" prefWidth="900.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.33853006681514475, 0.7071269487750557" focusTraversable="true" prefHeight="604.0" prefWidth="900.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane>
+        <AnchorPane minWidth="200.0" SplitPane.resizableWithParent="false">
           <children>
             <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Design" textAlignment="CENTER" wrapText="false">
               <font>
@@ -29,30 +30,30 @@
                 <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <Accordion layoutX="20.0" layoutY="48.0">
+                  <Accordion layoutX="20.0" layoutY="48.0" AnchorPane.leftAnchor="22.0" AnchorPane.rightAnchor="22.0">
                     <panes>
                       <TitledPane fx:id="hairOptions" animated="false" text="Hair">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0">
                                  <children>
-                                    <FlowPane layoutX="2.0" layoutY="2.0" prefHeight="129.0" prefWidth="197.0">
+                                    <FlowPane layoutX="15.4" layoutY="15.4" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-5.0" AnchorPane.topAnchor="-5.0">
                                        <children>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/hair/hair_curly.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/hair/hair_long.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/hair/hair_short.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewHair" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/hair/hair_wavy.png" />
                                              </image>
@@ -64,21 +65,21 @@
                       </TitledPane>
                       <TitledPane fx:id="skinOptions" animated="false" text="Skin">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                          <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <FlowPane prefHeight="129.0" prefWidth="197.0">
+                                    <FlowPane prefHeight="129.0" prefWidth="197.0" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-5.0" AnchorPane.topAnchor="-5.0">
                                        <children>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewSkin" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewSkin" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/skin/skin_light.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewSkin" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewSkin" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/skin/skin_brown.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewSkin" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewSkin" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/skin/skin_lighter.png" />
                                              </image>
@@ -88,23 +89,23 @@
                                  </children></AnchorPane>
                         </content>
                       </TitledPane>
-                      <TitledPane fx:id="eyebrowOptions" animated="false" prefHeight="208.0" prefWidth="126.0" text="Eyebrows">
+                      <TitledPane fx:id="eyebrowOptions" animated="false" prefWidth="126.0" text="Eyebrows">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                          <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <FlowPane prefHeight="129.0" prefWidth="197.0">
+                                    <FlowPane prefHeight="129.0" prefWidth="197.0" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-5.0" AnchorPane.topAnchor="-5.0">
                                        <children>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewBrow" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewBrow" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/brows/brows_default.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewBrow" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewBrow" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/brows/brows_angry.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewBrow" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewBrow" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/brows/brows_sad.png" />
                                              </image>
@@ -116,21 +117,21 @@
                       </TitledPane>
                         <TitledPane fx:id="eyeOptions" animated="false" text="Eyes">
                            <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                              <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <FlowPane prefHeight="129.0" prefWidth="197.0">
+                                    <FlowPane prefHeight="129.0" prefWidth="197.0" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-5.0" AnchorPane.topAnchor="-5.0">
                                        <children>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewEyes" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewEyes" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/eyes/eyes_default.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewEyes" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewEyes" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/eyes/eyes_wide.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewEyes" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewEyes" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/eyes/eyes_closed.png" />
                                              </image>
@@ -142,21 +143,21 @@
                         </TitledPane>
                         <TitledPane fx:id="mouthOptions" animated="false" text="Mouth">
                            <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
                                  <children>
-                                    <FlowPane prefHeight="129.0" prefWidth="197.0">
+                                    <FlowPane prefHeight="129.0" prefWidth="197.0" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-5.0" AnchorPane.topAnchor="-5.0">
                                        <children>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewMouth" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewMouth" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/mouth/mouth_default.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewMouth" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewMouth" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/mouth/mouth_sad.png" />
                                              </image>
                                           </ImageView>
-                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewMouth" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="70.0" fitWidth="70.0" onMouseClicked="#selectNewMouth" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@resources/mouth/mouth_serious.png" />
                                              </image>
@@ -170,7 +171,7 @@
                   </Accordion>
           </children>
         </AnchorPane>
-            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="598.0" prefWidth="335.0">
+            <AnchorPane id="Content" minHeight="-1.0" minWidth="325.0" prefHeight="598.0" prefWidth="325.0">
                <children>
                   <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="23.0" prefWidth="102.0" style="&#10;" text="My Avatar" textAlignment="CENTER" wrapText="false">
                      <font>
@@ -180,29 +181,30 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x21" />
                      </textFill>
                   </Label>
-                  <AnchorPane id="avatar" fx:id="avatarView" layoutX="42.0" layoutY="157.0" prefHeight="312.0" prefWidth="312.0">
+                  <AnchorPane id="avatar" fx:id="avatarViewavatarView" layoutX="29.0" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="270.0" prefWidth="270.0" AnchorPane.topAnchor="59.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="76.0" layoutY="75.0" onMouseClicked="#clickAvatarPart" preserveRatio="true">
+                        <Rectangle fx:id="avatarView" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="270.0" onMouseClicked="#selectAvatarBG" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="270.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <ImageView fx:id="avatarSkin" fitHeight="150.0" fitWidth="200.0" layoutX="43.0" layoutY="42.0" onMouseClicked="#clickAvatarPart" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" preserveRatio="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="46.0">
                            <image>
                               <Image url="@resources/skin/skin_light.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="avatarHair" fitHeight="150.0" fitWidth="200.0" layoutX="75.0" layoutY="67.0" onMouseClicked="#clickAvatarPart" preserveRatio="true">
+                        <ImageView fx:id="avatarHair" fitHeight="150.0" fitWidth="200.0" layoutX="43.0" layoutY="42.0" onMouseClicked="#clickAvatarPart" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" preserveRatio="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="46.0">
                            <image>
                               <Image url="@resources/hair/hair_long.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="avatarEyes" fitHeight="150.0" fitWidth="200.0" layoutX="76.0" layoutY="69.0" onMouseClicked="#clickAvatarPart" preserveRatio="true">
+                        <ImageView fx:id="avatarEyes" fitHeight="150.0" fitWidth="200.0" layoutX="43.0" layoutY="42.0" onMouseClicked="#clickAvatarPart" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" preserveRatio="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="46.0">
                            <image>
                               <Image url="@resources/eyes/eyes_default.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="avatarMouth" fitHeight="150.0" fitWidth="200.0" layoutX="76.0" layoutY="68.0" onMouseClicked="#clickAvatarPart" preserveRatio="true">
+                        <ImageView fx:id="avatarMouth" fitHeight="150.0" fitWidth="200.0" layoutX="43.0" layoutY="42.0" onMouseClicked="#clickAvatarPart" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" preserveRatio="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="46.0">
                            <image>
                               <Image url="@resources/mouth/mouth_default.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="avatarBrows" fitHeight="150.0" fitWidth="200.0" layoutX="76.0" layoutY="68.0" onMouseClicked="#clickAvatarPart" preserveRatio="true">
+                        <ImageView fx:id="avatarBrows" fitHeight="150.0" fitWidth="200.0" layoutX="43.0" layoutY="42.0" onMouseClicked="#clickAvatarPart" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" preserveRatio="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="46.0">
                            <image>
                               <Image url="@resources/brows/brows_default.png" />
                            </image>
@@ -213,9 +215,13 @@
         <AnchorPane prefHeight="598.0" prefWidth="199.0">
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="23.0" layoutY="15.0" style="&#10;" text="Customize" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                  <Button fx:id="downloadButton" layoutX="82.0" layoutY="537.0" mnemonicParsing="false" text="Download Avatar" />
-                  <ColorPicker layoutX="67.0" layoutY="99.0" />
-                  <ChoiceBox layoutX="63.0" layoutY="60.0" prefWidth="150.0" />
+                  <Button fx:id="downloadButton" layoutX="19.0" layoutY="537.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="223.0" text="Download Avatar" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="19.0" />
+                  <ColorPicker fx:id="colorPicker" disable="true" layoutX="64.0" layoutY="78.0" opacity="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0" />
+                  <Slider fx:id="horizontalSlider" disable="true" layoutX="76.0" layoutY="132.0" max="2.0" min="-2.0" opacity="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0" />
+                  <Slider fx:id="verticalSlider" disable="true" layoutX="121.0" layoutY="81.0" max="4.0" min="-4.0" opacity="0.0" orientation="VERTICAL" AnchorPane.leftAnchor="122.0" AnchorPane.rightAnchor="122.0" AnchorPane.topAnchor="80.0" />
+                  <Label fx:id="controlLabel" layoutX="26.0" layoutY="55.0" text="Background Color" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="50.0" />
+                  <ColorPicker fx:id="addBGColorPicker" layoutX="57.0" layoutY="67.0" onAction="#addBGColor" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0" />
+                  <Button fx:id="removeBGButton" disable="true" layoutX="42.0" layoutY="117.0" mnemonicParsing="false" onAction="#removeBGColor" prefHeight="27.0" prefWidth="168.0" text="Remove Background" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="115.0" />
           </children>
         </AnchorPane>
       </items>
