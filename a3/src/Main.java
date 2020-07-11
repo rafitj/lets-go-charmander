@@ -15,6 +15,7 @@ public class Main extends Application {
         stage.setWidth(1200);
         stage.setMinHeight(400);
         stage.setMinWidth(800);
+        stage.setTitle("Rafit's Avatar Builder");
         stage.show();
     }
 

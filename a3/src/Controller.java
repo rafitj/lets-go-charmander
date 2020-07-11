@@ -1,7 +1,9 @@
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -10,6 +12,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -19,8 +22,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
 import javax.lang.model.AnnotatedConstruct;
 import java.io.File;
+import java.io.IOException;
 
 
 // This is the controller class that handles input for our FXML form
@@ -46,6 +51,9 @@ public class Controller {
         ImageView hairImage = (ImageView) e.getSource();
         return hairImage.getImage().getUrl();
     }
+
+    @FXML
+    private AnchorPane avatarContainer;
 
     @FXML
     private Rectangle avatarView;
@@ -163,35 +171,59 @@ public class Controller {
 
     @FXML
     private void removeBGColor() {
+        System.out.println("REMV");
         addBGColorPicker.setValue(Color.TRANSPARENT);
         model.setBackgroundColor(Color.TRANSPARENT);
+        model.setSelected(null);
         updateAvatarBG();
-        removeBGButton.setDisable(true);
+        updateCommandBar();
     }
 
     @FXML
     private void addBGColor(Event e) {
         ColorPicker colorPicker = (ColorPicker) e.getSource();
         model.setBackgroundColor(colorPicker.getValue());
+        model.setSelected(null);
         updateAvatarBG();
-        removeBGButton.setDisable(false);
+        updateCommandBar();
     }
 
     @FXML
     private void hoverEnter(Event e) {
         Node node = (Node) e.getSource();
-        node.setCursor(Cursor.HAND);
+        node.setEffect(new InnerShadow( 15, Color.GREEN ));
+        updateSelectedView();
     }
 
     @FXML
     private void hoverExit(Event e) {
         Node node = (Node) e.getSource();
-        node.setCursor(Cursor.DEFAULT);
+        node.setEffect(null);
+        updateSelectedView();
+    }
+
+    @FXML
+    private void saveImage(Event e){
+        Button downloadButton = (Button) e.getSource();
+        Stage mainStage = (Stage) downloadButton.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Download Avatar Image");
+        File fileDist = fileChooser.showSaveDialog(mainStage);
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+        snapshotParameters.setFill(Color.TRANSPARENT);
+        WritableImage image = avatarContainer.snapshot(snapshotParameters, null);
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null),"png",fileDist);
+        } catch (IOException err) {
+            System.out.println(err.getMessage());
+        }
     }
 
     private void updateSelectedView() {
-        DropShadow ds = new DropShadow( 5, Color.RED );
-        model.getSelected().setEffect(ds);
+        InnerShadow ds = new InnerShadow( 10, Color.RED );
+        if (model.getSelected() != null) {
+            model.getSelected().setEffect(ds);
+        }
     }
 
     private void updateAvatarBG(){
@@ -204,23 +236,24 @@ public class Controller {
          if (selected == avatarBrows) {
             verticalSlider.setDisable(false);
             verticalSlider.setOpacity(1);
-             controlLabel.setOpacity(1);
-             controlLabel.setText("Eye Brow Level");
+            controlLabel.setOpacity(1);
+            controlLabel.setText("Eye Brow Level");
         } else if (selected == avatarEyes) {
             horizontalSlider.setDisable(false);
             horizontalSlider.setOpacity(1);
-             controlLabel.setOpacity(1);
-             controlLabel.setText("Eye Size");
+            controlLabel.setOpacity(1);
+            controlLabel.setText("Eye Size");
         } else if (selected == avatarHair) {
              colorPicker.setDisable(false);
              colorPicker.setOpacity(1);
              controlLabel.setOpacity(1);
              controlLabel.setText("Hair Color");
          } else if (selected == null){
-             removeBGButton.setDisable(model.getBackgroundColor() == Color.TRANSPARENT);
+             boolean isTransparent = model.getBackgroundColor().equals(Color.TRANSPARENT);
+             removeBGButton.setDisable(isTransparent);
              addBGColorPicker.setDisable(false);
              addBGColorPicker.setOpacity(1);
-             removeBGButton.setOpacity(1);
+             removeBGButton.setOpacity(isTransparent ? 0.5 : 1);
              controlLabel.setOpacity(1);
              controlLabel.setText("Background Color");
          }

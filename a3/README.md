@@ -1,34 +1,31 @@
-# FindFiles
+# Avatar Builder 
 
-CS349 - Assignment 1 by Rafit Jamil (rf2jamil)
+CS349 - Assignment 3 by Rafit Jamil (rf2jamil)
 
 ## Description
 
-FindFiles is a CLI File Search Utility that will find files given options and parameters, outputting the absolute file paths of the found files.
+Avatar Builder is an application that allows you to build your own avatar. Customize your hair, skin, facial features and background
+then download your awesome creation!
+
+## Features
+- Pick between 4 hair styles
+- Pick between 3 mouths
+- Pick between 3 eyebrows
+- Pick between 3 skin tones
+- Pick between 3 eyes
+- Change the size of your eyes
+- Reposition eyebrows
+- Change color of hair and parts of clothing individually
+- Change background or have transparent background
+- Download avatar with background or with transparent background
 
 ## Usage
 ```bash
-java FindFiles filetofind [-option argument1 argument2 ...]
+java Main
 ```
 
-## Options
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-```
-  -help                     :: print out a help page and exit the program.
-  -reg                      :: find files using [filietofind] argument as a regular expression.
-  -r                        :: execute the command recursively in subfiles.
-  -dir [directory]          :: find the files the specified directory [directory]. Default directory is the calling directory.
-  -ext [ext1,ext2,...]      :: find the files matching [filetofind] and with the given extensions [ext1, ext2,...]
-```
-
-## Notes
-1. Filename (`fileToFind`) cannot begin with `-`
-2. All options must start with `-` 
-3. `-help` will override all other commands
-4. Will report first error if multiple errors in command found
-5. Options parameters must be passed as a comma-separated list
-6. Options will be overridden with the last declared version of the option if declared multiple times
+## Resources 
+All resources used were supplied by CS349: https://www.student.cs.uwaterloo.ca/~cs349/s20/assignments/a3_resources.zip
 
 ## Submission Details
  Rafit Jamil\

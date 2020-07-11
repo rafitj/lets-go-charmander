@@ -181,9 +181,9 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x21" />
                      </textFill>
                   </Label>
-                  <AnchorPane id="avatar" fx:id="avatarViewavatarView" layoutX="29.0" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="270.0" prefWidth="270.0" AnchorPane.topAnchor="59.0">
+                  <AnchorPane id="avatar" fx:id="avatarContainer" layoutX="29.0" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="270.0" prefWidth="270.0" AnchorPane.topAnchor="59.0">
                      <children>
-                        <Rectangle fx:id="avatarView" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="270.0" onMouseClicked="#selectAvatarBG" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="270.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Rectangle fx:id="avatarView" arcHeight="5.0" arcWidth="5.0" fill="#ff000000" height="280.0" onMouseClicked="#selectAvatarBG" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="280.0" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="-5.0" AnchorPane.topAnchor="-5.0" />
                         <ImageView fx:id="avatarSkin" fitHeight="150.0" fitWidth="200.0" layoutX="43.0" layoutY="42.0" onMouseClicked="#clickAvatarPart" onMouseEntered="#hoverEnter" onMouseExited="#hoverExit" preserveRatio="true" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="46.0">
                            <image>
                               <Image url="@resources/skin/skin_light.png" />
@@ -215,13 +215,13 @@
         <AnchorPane prefHeight="598.0" prefWidth="199.0">
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="23.0" layoutY="15.0" style="&#10;" text="Customize" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                  <Button fx:id="downloadButton" layoutX="19.0" layoutY="537.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="223.0" text="Download Avatar" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="19.0" />
-                  <ColorPicker fx:id="colorPicker" disable="true" layoutX="64.0" layoutY="78.0" opacity="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0" />
+                  <Button fx:id="downloadButton" layoutX="19.0" layoutY="537.0" mnemonicParsing="false" onAction="#saveImage" prefHeight="27.0" prefWidth="223.0" text="Download Avatar" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="19.0" />
+                  <ColorPicker fx:id="colorPicker" disable="true" layoutX="64.0" layoutY="78.0" opacity="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0" />
                   <Slider fx:id="horizontalSlider" disable="true" layoutX="76.0" layoutY="132.0" max="2.0" min="-2.0" opacity="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0" />
                   <Slider fx:id="verticalSlider" disable="true" layoutX="121.0" layoutY="81.0" max="4.0" min="-4.0" opacity="0.0" orientation="VERTICAL" AnchorPane.leftAnchor="122.0" AnchorPane.rightAnchor="122.0" AnchorPane.topAnchor="80.0" />
                   <Label fx:id="controlLabel" layoutX="26.0" layoutY="55.0" text="Background Color" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="50.0" />
-                  <ColorPicker fx:id="addBGColorPicker" layoutX="57.0" layoutY="67.0" onAction="#addBGColor" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0" />
-                  <Button fx:id="removeBGButton" disable="true" layoutX="42.0" layoutY="117.0" mnemonicParsing="false" onAction="#removeBGColor" prefHeight="27.0" prefWidth="168.0" text="Remove Background" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="115.0" />
+                  <ColorPicker fx:id="addBGColorPicker" layoutX="57.0" layoutY="67.0" onAction="#addBGColor" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0" />
+                  <Button fx:id="removeBGButton" disable="true" layoutX="42.0" layoutY="117.0" mnemonicParsing="false" onAction="#removeBGColor" prefHeight="27.0" prefWidth="168.0" text="Remove Background" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="115.0" />
           </children>
         </AnchorPane>
       </items>
