@@ -1,7 +1,8 @@
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
@@ -13,19 +14,20 @@ import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
-import javax.lang.model.AnnotatedConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 // This is the controller class that handles input for our FXML form
@@ -35,6 +37,8 @@ public class Controller {
 
     private Model model;
 
+    private final SVGLoader svgLoader = new SVGLoader();
+
     public Controller(){
         this.model = new Model();
     }
@@ -42,14 +46,30 @@ public class Controller {
     public void initialize() {
         horizontalSlider.setValue(1);
         verticalSlider.setValue(1);
-        avatarEyes.scaleXProperty().bind(horizontalSlider.valueProperty());
-        avatarBrows.translateYProperty().bind(verticalSlider.valueProperty());
-        addBGColorPicker.setValue(Color.TRANSPARENT);
+        horizontalSlider.valueProperty().addListener((observable, oldvalue, newvalue) ->{
+            avatarEyes.setScaleX((Double) newvalue*0.25+0.5);
+            avatarEyes.setScaleY((Double) newvalue*0.25+0.5);
+        });
+        verticalSlider.valueProperty().addListener((observable, oldvalue, newvalue) ->{
+            avatarBrows.setTranslateY((Double) newvalue*-1);
+        });
+        colorPicker.setValue(Color.TRANSPARENT);
+        hair = svgLoader.loadSVG("resources/hair/hair_curly.svg");
+        setHairSVG("resources/hair/hair_curly.svg");
+
+        setClothesSVG();
+
+
     }
 
     private String getClickedImgUrl(Event e) {
         ImageView hairImage = (ImageView) e.getSource();
         return hairImage.getImage().getUrl();
+    }
+
+    private Color getHairSVGColor(){
+        SVGPath path = (SVGPath) hair.getChildren().get(0);
+        return (Color) path.getFill();
     }
 
     @FXML
@@ -71,7 +91,12 @@ public class Controller {
     private ImageView avatarMouth;
 
     @FXML
-    private ImageView avatarHair;
+    private Pane avatarHair;
+    private Group hair;
+
+    @FXML
+    private Pane avatarClothes;
+    private Group clothes;
 
     @FXML
     private Slider verticalSlider;
@@ -88,14 +113,17 @@ public class Controller {
     @FXML
     private Button removeBGButton;
 
-    @FXML
-    private ColorPicker addBGColorPicker;
+    private SVGPath jacket;
+    private SVGPath tshirt;
+    private SVGPath tshirtneck;
+    private SVGPath leftlapel;
+    private SVGPath rightlapel;
 
 //    Update
     private void updateView(AvatarPart modifiedPart){
         switch (modifiedPart) {
             case HAIR:
-                avatarHair.setImage(new Image(model.getHair()));
+                setHairSVG(model.getHairSVG());
                 break;
             case EYES:
                 avatarEyes.setImage(new Image(model.getEyes()));
@@ -114,11 +142,70 @@ public class Controller {
         }
     }
 
+    private void setClothesSVG() {
+        clothes = svgLoader.loadSVG("resources/clothes.svg");
+        clothes.setScaleX(1.62);
+        clothes.setScaleY(1.62);
+        clothes.setLayoutX(10);
+        clothes.setLayoutY(-10);
+        avatarClothes.getChildren().clear();
+        avatarClothes.getChildren().add(clothes);
+
+        tshirt = (SVGPath) clothes.getChildren().get(0);
+        jacket = (SVGPath) clothes.getChildren().get(1);
+        tshirtneck = (SVGPath) clothes.getChildren().get(2);
+        leftlapel = (SVGPath) clothes.getChildren().get(3);
+        rightlapel = (SVGPath) clothes.getChildren().get(4);
+
+        ArrayList<SVGPath> clothParts = new ArrayList<>();
+        clothParts.add(tshirt);
+        clothParts.add(jacket);
+        clothParts.add(tshirtneck);
+        clothParts.add(leftlapel);
+        clothParts.add(rightlapel);
+
+        for (SVGPath part : clothParts) {
+            part.setOnMouseClicked((new EventHandler<MouseEvent>() {
+                public void handle(MouseEvent event) {
+                    clickAvatarPart(event);
+                }
+            }));
+        }
+
+        model.setTshirtColor((Color) tshirt.getFill());
+        model.setTshirtNeckColor((Color) tshirtneck.getFill());
+        model.setLeftLapelColor((Color) leftlapel.getFill());
+        model.setRightLapelColor((Color) rightlapel.getFill());
+        model.setJacketColor((Color) jacket.getFill());
+
+    }
+
+    private void setHairSVG(String hairSVG) {
+        hair = svgLoader.loadSVG(hairSVG);
+        hair.setScaleX(1.62);
+        hair.setScaleY(1.62);
+         if (hairSVG.contains("curly")) {
+             hair.setLayoutY(4);
+             hair.setLayoutX(10);
+         } else {
+             hair.setLayoutY(-4);
+             hair.setLayoutX(8);
+         }
+        hair.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                clickAvatarPart(event);
+            }
+        }));
+        avatarHair.getChildren().clear();
+        avatarHair.getChildren().add(hair);
+    }
 
 //    Event Handlers
     @FXML
     private void selectNewHair(Event e){
-        model.setHair(getClickedImgUrl(e));
+        Node node = (Node) e.getSource();
+        String hair_id = node.getId();
+        model.setHair(hair_id);
         updateView(AvatarPart.HAIR);
     }
 
@@ -152,37 +239,52 @@ public class Controller {
             model.getSelected().setEffect(null);
         }
         avatarView.setEffect(null);
-        ImageView clicked = (ImageView) e.getSource();
+        Node clicked = (Node) e.getSource();
         model.setSelected(clicked);
         updateSelectedView();
         updateCommandBar();
     }
 
     @FXML
-    private void selectAvatarBG() {
-        DropShadow ds = new DropShadow( 5, Color.RED );
-        avatarView.setEffect(ds);
-        if (null != model.getSelected()) {
-            model.getSelected().setEffect(null);
+    private void changeColor(Event e) {
+        ColorPicker colorPicker = (ColorPicker) e.getSource();
+        Node selected = model.getSelected();
+        if (selected == hair) {
+            model.setHairColor(colorPicker.getValue());
+            for (int i = 0; i < hair.getChildren().size(); i++) {
+                SVGPath path = (SVGPath) hair.getChildren().get(i);
+                path.setFill(model.getHairColor());
+            }
+        } else if (selected == null) {
+            model.setBackgroundColor(colorPicker.getValue());
+            model.setSelected(null);
+            updateAvatarBG();
+            updateCommandBar();
+        } else if (selected == leftlapel || selected == rightlapel || selected == jacket || selected == tshirt || selected ==tshirtneck){
+            if (selected == leftlapel) {
+                model.setLeftLapelColor(colorPicker.getValue());
+                leftlapel.setFill(model.getLeftLapelColor());
+            } else if (selected == rightlapel) {
+                model.setRightLapelColor(colorPicker.getValue());
+                rightlapel.setFill(model.getRightLapelColor());
+            } else if (selected == jacket) {
+                model.setJacketColor(colorPicker.getValue());
+                jacket.setFill(model.getJacketColor());
+            } else if (selected == tshirt) {
+                model.setTshirtColor(colorPicker.getValue());
+                tshirt.setFill(model.getTshirtColor());
+            } else  {
+                model.setTshirtNeckColor(colorPicker.getValue());
+                tshirtneck.setFill(model.getTshirtNeckColor());
+            }
         }
-        model.setSelected(null);
-        updateCommandBar();
+
     }
 
     @FXML
     private void removeBGColor() {
-        System.out.println("REMV");
-        addBGColorPicker.setValue(Color.TRANSPARENT);
+        colorPicker.setValue(Color.TRANSPARENT);
         model.setBackgroundColor(Color.TRANSPARENT);
-        model.setSelected(null);
-        updateAvatarBG();
-        updateCommandBar();
-    }
-
-    @FXML
-    private void addBGColor(Event e) {
-        ColorPicker colorPicker = (ColorPicker) e.getSource();
-        model.setBackgroundColor(colorPicker.getValue());
         model.setSelected(null);
         updateAvatarBG();
         updateCommandBar();
@@ -204,19 +306,43 @@ public class Controller {
 
     @FXML
     private void saveImage(Event e){
+        deselect();
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+        snapshotParameters.setFill(Color.TRANSPARENT);
+        WritableImage image = avatarContainer.snapshot(snapshotParameters, null);
+
         Button downloadButton = (Button) e.getSource();
         Stage mainStage = (Stage) downloadButton.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Download Avatar Image");
-        File fileDist = fileChooser.showSaveDialog(mainStage);
-        SnapshotParameters snapshotParameters = new SnapshotParameters();
-        snapshotParameters.setFill(Color.TRANSPARENT);
-        WritableImage image = avatarContainer.snapshot(snapshotParameters, null);
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null),"png",fileDist);
-        } catch (IOException err) {
-            System.out.println(err.getMessage());
+        File fileDest = fileChooser.showSaveDialog(mainStage);
+
+        if (fileDest != null) {
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null),"png",fileDest);
+            } catch (IOException err) {
+                System.out.println(err.getMessage());
+            }
         }
+    }
+
+    @FXML
+    private void handleRandomClick(MouseEvent e) {
+        Node clicked = e.getPickResult().getIntersectedNode();
+        if (clicked != hair.getChildren().get(0) && clicked != avatarEyes && clicked != avatarBrows && clicked != jacket && clicked != avatarContainer
+            && clicked != leftlapel && clicked != rightlapel && clicked !=tshirt && clicked != tshirtneck) {
+            deselect();
+
+        }
+    }
+
+    @FXML
+    private void deselect() {
+        if (model.getSelected() != null) {
+            model.getSelected().setEffect(null);
+        }
+        model.setSelected(null);
+        updateCommandBar();
     }
 
     private void updateSelectedView() {
@@ -231,7 +357,7 @@ public class Controller {
     }
 
     private void updateCommandBar(){
-        ImageView selected = model.getSelected();
+        Node selected = model.getSelected();
         disableControls();
          if (selected == avatarBrows) {
             verticalSlider.setDisable(false);
@@ -243,19 +369,31 @@ public class Controller {
             horizontalSlider.setOpacity(1);
             controlLabel.setOpacity(1);
             controlLabel.setText("Eye Size");
-        } else if (selected == avatarHair) {
+        } else if (selected == hair) {
              colorPicker.setDisable(false);
              colorPicker.setOpacity(1);
              controlLabel.setOpacity(1);
              controlLabel.setText("Hair Color");
+             colorPicker.setValue(getHairSVGColor());
+         } else if (selected == leftlapel || selected == rightlapel || selected == jacket || selected == tshirt || selected ==tshirtneck ) {
+             colorPicker.setDisable(false);
+             colorPicker.setOpacity(1);
+             controlLabel.setOpacity(1);
+             controlLabel.setText("Clothing Part Color");
+             if (selected == leftlapel) colorPicker.setValue(model.getLeftLapelColor());
+             if (selected == rightlapel) colorPicker.setValue(model.getRightLapelColor());
+             if (selected == jacket) colorPicker.setValue(model.getJacketColor());
+             if (selected == tshirt) colorPicker.setValue(model.getTshirtColor());
+             if (selected == tshirtneck) colorPicker.setValue(model.getTshirtNeckColor());
          } else if (selected == null){
              boolean isTransparent = model.getBackgroundColor().equals(Color.TRANSPARENT);
              removeBGButton.setDisable(isTransparent);
-             addBGColorPicker.setDisable(false);
-             addBGColorPicker.setOpacity(1);
+             colorPicker.setDisable(false);
+             colorPicker.setOpacity(1);
              removeBGButton.setOpacity(isTransparent ? 0.5 : 1);
              controlLabel.setOpacity(1);
              controlLabel.setText("Background Color");
+             colorPicker.setValue(model.getBackgroundColor());
          }
     }
 
@@ -267,9 +405,7 @@ public class Controller {
         verticalSlider.setOpacity(0);
         horizontalSlider.setOpacity(0);
         colorPicker.setOpacity(0);
-        addBGColorPicker.setOpacity(0);
         removeBGButton.setOpacity(0);
-        addBGColorPicker.setDisable(true);
         removeBGButton.setDisable(true);
     }
 

@@ -1,3 +1,4 @@
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -40,15 +41,14 @@ public class Model {
     private int eyeSize;
     private int eyebrowPosition;
 
-    private ImageView selected;
+    private Node selected;
 
     public Model(){
-        hair="hair_curly.png";
+        hair="hair_curly.svg";
         eyes="eyes_default.png";
         mouth="mouth_default.png";
         eyebrows="brows_default.png";
         skin="skin_light.png";
-//      TODO: Initialize colors
 
         eyeSize=1;
         eyebrowPosition=0;
@@ -70,6 +70,10 @@ public class Model {
 
     public void setEyes(String eyes) {
         this.eyes = eyes;
+    }
+
+    public String getHairSVG() {
+        return "resources/hair/"+getHair()+".svg";
     }
 
     public String getHair() {
@@ -168,11 +172,11 @@ public class Model {
         this.eyebrowPosition = eyebrowPosition;
     }
 
-    public ImageView getSelected() {
+    public Node getSelected() {
         return selected;
     }
 
-    public void setSelected(ImageView selected) {
+    public void setSelected(Node selected) {
         this.selected = selected;
     }
 }
