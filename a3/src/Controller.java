@@ -189,6 +189,8 @@ public class Controller {
         Button downloadButton = (Button) e.getSource();
         Stage mainStage = (Stage) downloadButton.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png"));
         fileChooser.setTitle("Download Avatar Image");
         File fileDest = fileChooser.showSaveDialog(mainStage);
 
