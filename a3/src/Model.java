@@ -1,10 +1,7 @@
+import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-
-// This is the controller class that handles input for our FXML form
-// We specify this class in the FXML file when we create it.
+import javafx.scene.shape.SVGPath;
 
 enum AvatarPart {
     HAIR,
@@ -12,46 +9,49 @@ enum AvatarPart {
     SKIN,
     MOUTH,
     EYEBROWS,
-    JACKET,
-    TSHIRT,
-    TSHIRTNECK,
-    LEFTLAPEL,
-    RIGHTLAPEL
 }
 
 public class Model {
 
+    private final SVGLoader svgLoader = new SVGLoader();
+    private  Controller view;
+
     //  Data Members
     private Color backgroundColor;
 
-    private String hair;
+
+    private String hairId;
     private String eyes;
     private String skin;
     private String mouth;
     private String eyebrows;
 
     private Color jacketColor;
-    private Color tshirtColor;
-    private Color tshirtNeckColor;
+    private Color tShirtColor;
+    private Color tShirtNeckColor;
     private Color leftLapelColor;
     private Color rightLapelColor;
 
-    private Color hairColor;
+    private SVGPath jacket;
+    private SVGPath tShirt;
+    private SVGPath tShirtNeck;
+    private SVGPath leftLapel;
+    private SVGPath rightLapel;
 
-    private int eyeSize;
-    private int eyebrowPosition;
+    private Group clothes;
+    private Group hair;
+
+    private Color hairColor;
 
     private Node selected;
 
-    public Model(){
-        hair="hair_curly.svg";
+    public Model(Controller controller){
+        view = controller;
+
         eyes="eyes_default.png";
         mouth="mouth_default.png";
         eyebrows="brows_default.png";
         skin="skin_light.png";
-
-        eyeSize=1;
-        eyebrowPosition=0;
 
         backgroundColor = Color.TRANSPARENT;
     }
@@ -62,7 +62,56 @@ public class Model {
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        view.updateAvatarBG();
     }
+
+    public Group getClothes(){
+        return clothes;
+    }
+
+    public void setClothes(String url) {
+        clothes = svgLoader.loadSVG(url);
+        clothes.setScaleX(1.62);
+        clothes.setScaleY(1.62);
+        clothes.setLayoutX(10);
+        clothes.setLayoutY(-10);
+        view.updateClothes();
+    }
+
+    public Group getHair(){
+        return hair;
+    }
+
+    public void setHair(String hairSVG) {
+        hair = svgLoader.loadSVG(hairSVG);
+        hair.setScaleX(1.62);
+        hair.setScaleY(1.62);
+        if (hairSVG.contains("curly")) {
+            hair.setLayoutY(4);
+            hair.setLayoutX(10);
+        } else {
+            hair.setLayoutY(-4);
+            hair.setLayoutX(8);
+        }
+        view.registerAction(hair);
+        view.updateView(AvatarPart.HAIR);
+        view.updateHairColor();
+    }
+
+    public Color getHairSVGColor(){
+        SVGPath path = (SVGPath) hair.getChildren().get(0);
+        return (Color) path.getFill();
+    }
+
+    public String getHairId() {
+        return hairId;
+    }
+
+    public void setHairId(String hairId) {
+        this.hairId = hairId;
+        setHair("resources/hair/"+hairId+".svg");
+    }
+
 
     public String getEyes() {
         return eyes;
@@ -70,18 +119,7 @@ public class Model {
 
     public void setEyes(String eyes) {
         this.eyes = eyes;
-    }
-
-    public String getHairSVG() {
-        return "resources/hair/"+getHair()+".svg";
-    }
-
-    public String getHair() {
-        return hair;
-    }
-
-    public void setHair(String hair) {
-        this.hair = hair;
+        view.updateView(AvatarPart.EYES);
     }
 
     public String getSkin() {
@@ -90,6 +128,7 @@ public class Model {
 
     public void setSkin(String skin) {
         this.skin = skin;
+        view.updateView(AvatarPart.SKIN);
     }
 
     public String getMouth() {
@@ -98,6 +137,7 @@ public class Model {
 
     public void setMouth(String mouth) {
         this.mouth = mouth;
+        view.updateView(AvatarPart.MOUTH);
     }
 
     public String getEyebrows() {
@@ -106,6 +146,52 @@ public class Model {
 
     public void setEyebrows(String eyebrows) {
         this.eyebrows = eyebrows;
+        view.updateView(AvatarPart.EYEBROWS);
+    }
+
+    public SVGPath getJacket() {
+        return jacket;
+    }
+
+    public void setJacket(SVGPath jacket) {
+        this.jacket = jacket;
+        view.registerAction(jacket);
+    }
+
+    public SVGPath getTShirt() {
+        return tShirt;
+    }
+
+    public void setTShirt(SVGPath tShirt) {
+        this.tShirt = tShirt;
+        view.registerAction(tShirt);
+    }
+
+    public SVGPath getTShirtNeck() {
+        return tShirtNeck;
+    }
+
+    public void setTShirtNeck(SVGPath tShirtNeck) {
+        this.tShirtNeck = tShirtNeck;
+        view.registerAction(tShirtNeck);
+    }
+
+    public SVGPath getLeftLapel() {
+        return leftLapel;
+    }
+
+    public void setLeftLapel(SVGPath leftLapel) {
+        this.leftLapel = leftLapel;
+        view.registerAction(leftLapel);
+    }
+
+    public SVGPath getRightLapel() {
+        return rightLapel;
+    }
+
+    public void setRightLapel(SVGPath rightLapel) {
+        this.rightLapel = rightLapel;
+        view.registerAction(rightLapel);
     }
 
     public Color getJacketColor() {
@@ -114,22 +200,25 @@ public class Model {
 
     public void setJacketColor(Color jacketColor) {
         this.jacketColor = jacketColor;
+        view.updateJacketView();
     }
 
-    public Color getTshirtColor() {
-        return tshirtColor;
+    public Color getTShirtColor() {
+        return tShirtColor;
     }
 
-    public void setTshirtColor(Color tshirtColor) {
-        this.tshirtColor = tshirtColor;
+    public void setTShirtColor(Color tShirtColor) {
+        this.tShirtColor = tShirtColor;
+        view.updateTShirtView();
     }
 
-    public Color getTshirtNeckColor() {
-        return tshirtNeckColor;
+    public Color getTShirtNeckColor() {
+        return tShirtNeckColor;
     }
 
-    public void setTshirtNeckColor(Color tshirtNeckColor) {
-        this.tshirtNeckColor = tshirtNeckColor;
+    public void setTShirtNeckColor(Color tShirtNeckColor) {
+        this.tShirtNeckColor = tShirtNeckColor;
+        view.updateTShirtNeckView();
     }
 
     public Color getLeftLapelColor() {
@@ -138,6 +227,7 @@ public class Model {
 
     public void setLeftLapelColor(Color leftLapelColor) {
         this.leftLapelColor = leftLapelColor;
+        view.updateLeftLapelView();
     }
 
     public Color getRightLapelColor() {
@@ -146,30 +236,19 @@ public class Model {
 
     public void setRightLapelColor(Color rightLapelColor) {
         this.rightLapelColor = rightLapelColor;
+        view.updateRightLapelView();
     }
 
     public Color getHairColor() {
+        if (hairColor == null) {
+            return getHairSVGColor();
+        }
         return hairColor;
     }
 
     public void setHairColor(Color hairColor) {
         this.hairColor = hairColor;
-    }
-
-    public int getEyeSize() {
-        return eyeSize;
-    }
-
-    public void setEyeSize(int eyeSize) {
-        this.eyeSize = eyeSize;
-    }
-
-    public int getEyebrowPosition() {
-        return eyebrowPosition;
-    }
-
-    public void setEyebrowPosition(int eyebrowPosition) {
-        this.eyebrowPosition = eyebrowPosition;
+        view.updateHairColor();
     }
 
     public Node getSelected() {
@@ -178,5 +257,8 @@ public class Model {
 
     public void setSelected(Node selected) {
         this.selected = selected;
+        view.updateSelectedView();
+        view.updateCommandBar();
+
     }
 }

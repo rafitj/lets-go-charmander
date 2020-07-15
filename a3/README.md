@@ -7,6 +7,9 @@ CS349 - Assignment 3 by Rafit Jamil (rf2jamil)
 Avatar Builder is an application that allows you to build your own avatar. Customize your hair, skin, facial features and background
 then download your awesome creation!
 
+**BONUS FEATURE: Background Color Change and Download!**
+
+
 ## Features
 - Pick between 4 hair styles
 - Pick between 3 mouths
