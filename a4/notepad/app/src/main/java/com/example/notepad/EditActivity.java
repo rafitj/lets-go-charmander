@@ -1,6 +1,7 @@
 package com.example.notepad;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 public class EditActivity extends AppCompatActivity {
 
-    private final static String noteIDKey = "CURRENT_NOTE_ID";
+    private final static String noteIDKey = "CURRENT_NOTE";
 
     private Note note;
     private EditText noteTextInput;
@@ -27,9 +28,11 @@ public class EditActivity extends AppCompatActivity {
         noteTitleInput = (EditText) findViewById(R.id.noteTitle);
 
         Intent intent = getIntent();
-        String noteId = intent.getStringExtra(noteIDKey);
-        if (noteId != null) {
-            loadNote(noteId);
+        Note notePreview = (Note) intent.getSerializableExtra(noteIDKey);
+        if (notePreview != null) {
+            note = notePreview;
+            AsyncTaskExample asyncTask=new AsyncTaskExample();
+            asyncTask.execute(note.getId());
         }
     }
 
@@ -70,18 +73,17 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    private void loadNote(String noteId){
+    private Note loadNote(String noteId){
         try {
             File file = new File(this.getFilesDir(), "/" + noteId);
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream oi = new ObjectInputStream(fileInputStream);
             note = (Note) oi.readObject();
-            noteTitleInput.setText(note.getTitle());
-            noteTextInput.setText(note.getText());
             fileInputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return note;
     }
 
     private void updateNotePreview(){
@@ -94,7 +96,6 @@ public class EditActivity extends AppCompatActivity {
             ObjectInputStream oi = new ObjectInputStream(fileInputStream);
             ArrayList<Note> notePreviews = (ArrayList<Note>) oi.readObject();
 
-            System.out.println(notePreviews);
             for (int i = 0; i<notePreviews.size(); i++){
                 Note notePreview = notePreviews.get(i);
                 if(notePreview.getId().equals(note.getId())) {
@@ -152,9 +153,30 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private String getStub(String s) {
-        if (s.length() > 15) {
-            return s.substring(0,15);
+        if (s.length() > 50) {
+            return s.substring(0,50);
         }
         return s;
+    }
+
+    //    Async Task Stuff
+    private class AsyncTaskExample extends AsyncTask<String, String, Note> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            noteTitleInput.setText(note.getTitle());
+            noteTextInput.setText(note.getText());
+        }
+        @Override
+        protected Note doInBackground(String... noteIds) {
+          return loadNote(noteIds[0]);
+        }
+        @Override
+        protected void onPostExecute(Note loadedNote) {
+            super.onPostExecute(loadedNote);
+            note = loadedNote;
+            noteTitleInput.setText(loadedNote.getTitle());
+            noteTextInput.setText(loadedNote.getText());
+        }
     }
 }

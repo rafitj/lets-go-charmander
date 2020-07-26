@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyViewHolder> {
     private ArrayList<Note> notePreviews;
-    private final static String noteIDKey = "CURRENT_NOTE_ID";
+    private final static String noteIDKey = "CURRENT_NOTE";
 
     public NoteListAdapter(ArrayList<Note> notePreviews) {
         this.notePreviews = notePreviews;
@@ -59,7 +59,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewNote(view.getContext(),notePreviews.get(position).getId());
+                viewNote(view.getContext(),notePreviews.get(position));
             }
         });
     }
@@ -83,9 +83,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         this.notifyItemRemoved(position);
     }
 
-    private void viewNote(Context context, String noteId){
+    private void viewNote(Context context, Note notePreview){
         Intent intent = new Intent(context, EditActivity.class);
-        intent.putExtra(noteIDKey,noteId);
+        intent.putExtra(noteIDKey,notePreview);
         ((Activity) context).startActivity(intent);
     }
 
