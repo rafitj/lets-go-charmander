@@ -1,7 +1,9 @@
 package com.example.notepad;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,6 +12,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,7 +26,7 @@ public class EditActivity extends AppCompatActivity {
     private EditText noteTextInput;
     private EditText noteTitleInput;
 
-    private Bundle state;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,48 +38,92 @@ public class EditActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String noteId = intent.getStringExtra(noteIDKey);
-
-        if (savedInstanceState != null) {
-            note = (Note) savedInstanceState.getParcelable(noteId);
-            noteTextInput.setText(note.getText());
-            noteTitleInput.setText(note.getTitle());
+        if (noteId != null) {
+            loadNote(noteId);
         }
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState = state;
-        saveNote(outState);
+        saveNote();
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstance){
-        state = savedInstance;
-        super.onRestoreInstanceState(state);
-    }
-
     public void saveAndExit(View view){
-        saveNote(state);
+        saveNote();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    private void saveNote(Bundle outState) {
-        System.out.println("Saving Note");
+    private void saveNote() {
         if (note!=null){
             note.setText(noteTextInput.getText().toString());
             note.setTitle(noteTitleInput.getText().toString());
-            outState.putParcelable(note.getId(), (Parcelable) note);
-
+            storeNote();
         } else if (noteTextInput.getText().length()!=0 || noteTitleInput.getText().length()!=0) {
             note = new Note(noteTitleInput.getText().toString(),noteTextInput.getText().toString());
-            outState.putParcelable(note.getId(), (Parcelable) note);
-            ArrayList<String> noteIDList = outState.getStringArrayList(noteIDListKey);
-            noteIDList.add(note.getId());
-            outState.putStringArrayList(noteIDListKey,noteIDList);
+            storeNote();
+            storeNoteIds();
         }
     }
 
+    private void storeNote(){
+        try {
+            File file = new File(this.getFilesDir(), "/" + note.getId());
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(note);
+            objectOut.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void loadNote(String noteId){
+        try {
+            File file = new File(this.getFilesDir(), "/" + noteId);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream oi = new ObjectInputStream(fileInputStream);
+            note = (Note) oi.readObject();
+            noteTitleInput.setText(note.getText());
+            noteTextInput.setText(note.getTitle());
+            fileInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void storeNoteIds(){
+        try {
+            File file = new File(this.getFilesDir(), "/noteIds");
+            if (!file.isFile()){
+                initializeNoteIdStore();
+            }
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream oi = new ObjectInputStream(fileInputStream);
+            ArrayList<String> noteIds = (ArrayList<String>) oi.readObject();
+
+            noteIds.add(note.getId());
+
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(noteIds);
+            objectOut.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void initializeNoteIdStore(){
+        try {
+            File file = new File(this.getFilesDir(), "/noteIds");
+            ArrayList<String> noteIds = new ArrayList<>();
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(noteIds);
+            objectOut.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

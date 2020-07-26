@@ -8,27 +8,21 @@
         tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="349dp"
-            android:layout_height="622dp"
-            android:id="@+id/recyclerView" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="24dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/noteListRecyclerView" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="24dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/button"/>
-    <Button
-            android:text="New Note"
+    />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/button"
-            android:layout_marginEnd="158dp" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="158dp"
-            android:layout_marginBottom="24dp" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+            android:layout_height="wrap_content"
+            android:clickable="true" app:srcCompat="@android:drawable/ic_menu_edit"
+            android:id="@+id/newNoteFab"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="32dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="32dp"
             android:onClick="createNewNote"/>
-    <Button
-            android:text="view note 2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/button2"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-            android:onClick="viewNote"
-            tools:layout_editor_absoluteX="253dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
