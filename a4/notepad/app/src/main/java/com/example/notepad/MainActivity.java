@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        File file = new File(this.getFilesDir(), "/noteIds");
+        File file = new File(this.getFilesDir(), "/notePreviews");
 
         recyclerView = (RecyclerView) findViewById(R.id.noteListRecyclerView);
         recyclerView.setHasFixedSize(true);
@@ -29,17 +29,17 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        ArrayList<String> noteIds = new ArrayList<>();
+        ArrayList<Note> notePreviews = new ArrayList<>();
         if (file.isFile()){
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
                 ObjectInputStream oi = new ObjectInputStream(fileInputStream);
-                noteIds = (ArrayList<String>) oi.readObject();
+                notePreviews = (ArrayList<Note>) oi.readObject();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
-        mAdapter = new NoteListAdapter(noteIds);
+        mAdapter = new NoteListAdapter(notePreviews);
         recyclerView.setAdapter(mAdapter);
     }
 

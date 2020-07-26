@@ -38,6 +38,23 @@ public class Note implements Serializable {
         this.text = text;
     }
 
+    public String getPreviewTitle() {
+        if (title.length() != 0) {
+            return title;
+        }
+        if (text.length() > 10) {
+            return text.substring(0,10);
+        }
+        return text;
+    }
+
+    public String getPreviewContent() {
+        if (text.length() > 15) {
+            return text.substring(0,15);
+        }
+        return text;
+    }
+
     @Override
     public String toString() {
         return new StringBuffer(" ID: ").append(this.id).append(" Title : ").append(this.title).append(" Text : ").append(this.text).toString();

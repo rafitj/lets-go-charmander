@@ -16,11 +16,11 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyViewHolder> {
-    private ArrayList<String> noteIds;
+    private ArrayList<Note> notePreviews;
     private final static String noteIDKey = "CURRENT_NOTE_ID";
 
-    public NoteListAdapter(ArrayList<String> noteIds) {
-        this.noteIds = noteIds;
+    public NoteListAdapter(ArrayList<Note> notePreviews) {
+        this.notePreviews = notePreviews;
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -48,35 +48,34 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        holder.noteListTitle.setText(noteIds.get(position).substring(0,10));
-        holder.noteListContent.setText("Test");
+        holder.noteListTitle.setText(notePreviews.get(position).getPreviewTitle());
+        holder.noteListContent.setText(notePreviews.get(position).getPreviewContent());
         holder.deleteNoteFab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 deleteNote(view.getContext(),position);
-                System.out.println("Delete Note");
             }
         });
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewNote(view.getContext(),noteIds.get(position));
+                viewNote(view.getContext(),notePreviews.get(position).getId());
             }
         });
     }
 
     private void deleteNote(Context context, int position) {
-        File noteFile = new File(context.getFilesDir(),"/"+noteIds.get(position));
+        File noteFile = new File(context.getFilesDir(),"/"+notePreviews.get(position).getId());
         if (noteFile.isFile()) {
             noteFile.delete();
         }
 
         try {
-            File noteIdsFile = new File(context.getFilesDir(),"/noteIds");
-            noteIds.remove(position);
+            File noteIdsFile = new File(context.getFilesDir(),"/notePreviews");
+            notePreviews.remove(position);
             FileOutputStream fileOut = new FileOutputStream(noteIdsFile);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            objectOut.writeObject(noteIds);
+            objectOut.writeObject(notePreviews);
             objectOut.close();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -92,6 +91,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     @Override
     public int getItemCount() {
-        return noteIds.size();
+        return notePreviews.size();
     }
 }

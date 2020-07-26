@@ -1,6 +1,5 @@
 package com.example.notepad;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,13 +13,10 @@ import java.util.ArrayList;
 public class EditActivity extends AppCompatActivity {
 
     private final static String noteIDKey = "CURRENT_NOTE_ID";
-    private final static String noteIDListKey = "NOTE_IDS";
 
     private Note note;
     private EditText noteTextInput;
     private EditText noteTitleInput;
-
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +34,9 @@ public class EditActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onDestroy() {
         saveNote();
-        super.onSaveInstanceState(outState);
+        super.onDestroy();
     }
 
     public void saveAndExit(View view){
@@ -54,10 +50,11 @@ public class EditActivity extends AppCompatActivity {
             note.setText(noteTextInput.getText().toString());
             note.setTitle(noteTitleInput.getText().toString());
             storeNote();
+            updateNotePreview();
         } else if (noteTextInput.getText().length()!=0 || noteTitleInput.getText().length()!=0) {
             note = new Note(noteTitleInput.getText().toString(),noteTextInput.getText().toString());
             storeNote();
-            storeNoteIds();
+            addNewNotePreview();
         }
     }
 
@@ -87,37 +84,77 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    private void storeNoteIds(){
+    private void updateNotePreview(){
         try {
-            File file = new File(this.getFilesDir(), "/noteIds");
+            File file = new File(this.getFilesDir(), "/notePreviews");
             if (!file.isFile()){
-                initializeNoteIdStore();
+                initializeNotePreviewStore();
             }
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream oi = new ObjectInputStream(fileInputStream);
-            ArrayList<String> noteIds = (ArrayList<String>) oi.readObject();
+            ArrayList<Note> notePreviews = (ArrayList<Note>) oi.readObject();
 
-            noteIds.add(0,note.getId());
+            System.out.println(notePreviews);
+            for (int i = 0; i<notePreviews.size(); i++){
+                Note notePreview = notePreviews.get(i);
+                if(notePreview.getId().equals(note.getId())) {
+                    notePreview.setText(getStub(note.getText()));
+                    notePreview.setTitle(note.getTitle());
+                    break;
+                }
+            }
+            System.out.println(notePreviews);
 
             FileOutputStream fileOut = new FileOutputStream(file);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            objectOut.writeObject(noteIds);
+            objectOut.writeObject(notePreviews);
             objectOut.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void initializeNoteIdStore(){
+    private void addNewNotePreview(){
         try {
-            File file = new File(this.getFilesDir(), "/noteIds");
-            ArrayList<String> noteIds = new ArrayList<>();
+            File file = new File(this.getFilesDir(), "/notePreviews");
+            if (!file.isFile()){
+                initializeNotePreviewStore();
+            }
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream oi = new ObjectInputStream(fileInputStream);
+            ArrayList<Note> notePreviews = (ArrayList<Note>) oi.readObject();
+
+            Note newNotePreview = new Note(note.getTitle(),getStub(note.getText()));
+            newNotePreview.setId(note.getId());
+
+            notePreviews.add(0,newNotePreview);
+
             FileOutputStream fileOut = new FileOutputStream(file);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            objectOut.writeObject(noteIds);
+            objectOut.writeObject(notePreviews);
             objectOut.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void initializeNotePreviewStore(){
+        try {
+            File file = new File(this.getFilesDir(), "/notePreviews");
+            ArrayList<Note> notePreviews = new ArrayList<>();
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(notePreviews);
+            objectOut.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private String getStub(String s) {
+        if (s.length() > 15) {
+            return s.substring(0,15);
+        }
+        return s;
     }
 }
