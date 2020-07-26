@@ -85,8 +85,8 @@ public class EditActivity extends AppCompatActivity {
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream oi = new ObjectInputStream(fileInputStream);
             note = (Note) oi.readObject();
-            noteTitleInput.setText(note.getText());
-            noteTextInput.setText(note.getTitle());
+            noteTitleInput.setText(note.getTitle());
+            noteTextInput.setText(note.getText());
             fileInputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,7 +103,7 @@ public class EditActivity extends AppCompatActivity {
             ObjectInputStream oi = new ObjectInputStream(fileInputStream);
             ArrayList<String> noteIds = (ArrayList<String>) oi.readObject();
 
-            noteIds.add(note.getId());
+            noteIds.add(0,note.getId());
 
             FileOutputStream fileOut = new FileOutputStream(file);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
