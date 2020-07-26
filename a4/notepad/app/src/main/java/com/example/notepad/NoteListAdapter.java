@@ -69,7 +69,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         if (noteFile.isFile()) {
             noteFile.delete();
         }
-
         try {
             File noteIdsFile = new File(context.getFilesDir(),"/notePreviews");
             notePreviews.remove(position);
@@ -81,6 +80,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             ex.printStackTrace();
         }
         this.notifyItemRemoved(position);
+        this.notifyItemRangeChanged(position,notePreviews.size());
     }
 
     private void viewNote(Context context, Note notePreview){

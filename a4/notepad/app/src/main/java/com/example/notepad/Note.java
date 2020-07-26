@@ -43,14 +43,14 @@ public class Note implements Serializable {
             return title;
         }
         if (text.length() > 10) {
-            return text.substring(0,10);
+            return text.substring(0,10) + "...";
         }
         return text;
     }
 
     public String getPreviewContent() {
         if (text.length() > 15) {
-            return text.substring(0,15);
+            return text.substring(0,15) + "...";
         }
         return text;
     }
