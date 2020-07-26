@@ -12,7 +12,6 @@ public class Note implements Serializable {
         this.text = text;
         this.title = title;
         this.id = "note"+UUID.randomUUID().toString();
-//        this.id = "note2";
     }
 
     public String getId() {
