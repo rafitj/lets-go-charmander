@@ -13,6 +13,8 @@
  as he ventures through the many regions of the Pokemon world battling other Pokemon to gain XP and grow. Each round you have
  3 lives and your goal is to use your fire-attack to defeat all the enemies before they defeat you and set you back. Gain 
  as much XP as you can and finish all 3 levels to get the end of Charmander's epic adventure!
+ 
+ This was made for my CS348 course at UW.
 
 ## Usage
 **This project requires `javafx`**.
