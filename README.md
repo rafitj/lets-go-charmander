@@ -1,6 +1,7 @@
-# MiniGame
+# Let's Go Charmander
 
-CS349 - Assignment 2 by Rafit Jamil (rf2jamil)
+## Preview
+
 
 ## Description
 
@@ -29,10 +30,4 @@ A list of all specific assets/resources used are provided below:
 - Game Win Background: https://images8.alphacoders.com/849/849531.jpg
 - Game Win Confetti: https://i.pinimg.com/originals/b5/e3/90/b5e3903051d2157407a446ecdc0c37b6.gif
 - Fire VFX: https://giphy.com/stickers/asparstudio-motion-fire-flame-flare-UPuWR8O5eFOC2FdKp4, https://giphy.com/stickers/orlandomagic-fire-magic-orlando-ZCfDkkDYlUDcoF4qev, https://giphy.com/stickers/fire-26DNj3iQi58mrvTDW
-- Evolution Background: https://i.stack.imgur.com/EZ1Mp.gif
-
-## Submission Details
- Rafit Jamil\
- 20785154 rf2jamil\
- openjdk 11.0.7 2020-04-14\
- macOS 10.15.4 (MacBook Pro 2019)
+- Evolution Background: https://i.stack.imgur.com/EZ1Mp.
