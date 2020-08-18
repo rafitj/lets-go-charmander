@@ -1,6 +1,10 @@
 # Let's Go Charmander
 
 ## Preview
+![Home Screen Preview](./preview/Preview%201.jpg)
+![Level 1 Preview](./preview/Preview%202.jpg)
+![Level 3 Preview](./preview/Preview%204.jpg)
+![Finish Preview](./preview/Preview%205.jpg)
 
 
 ## Description
